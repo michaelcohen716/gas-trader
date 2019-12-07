@@ -1,0 +1,18 @@
+{
+  "name": "gas-trader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chainlink": "^0.7.9",
+    "truffle": "^5.1.3"
+  }
+}
