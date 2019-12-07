@@ -7,11 +7,16 @@
   src: url('./assets/fonts/Alien-Encounters-Italic.ttf')
 }
 
+* {
+  font-family: Courier, monospace;
+}
+
 h1 {
   font-family: 'Logo';
   color: #dc5ff4;
 }
 
 h1 > span {
+  font-family: 'Logo';
   color: #9d63f7;
 }
