@@ -1,8 +1,13 @@
 import React, { Component } from "react";
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import getWeb3 from "./getWeb3";
 import Interface from "./Interface";
 import "./App.css";
-
+// import { drizzleReactHooks } from 'drizzle-react';
+import Header from './components/Layout/Header';
+import Sidebar from './components/Layout/Sidebar';
+import Dashboard from './Dashboard';
+import Orders from './Orders';
 
 class App extends Component {
   // state = { storageValue: 0, web3: null, accounts: null, contract: null };
@@ -53,8 +58,20 @@ class App extends Component {
     //   return <div>Loading Web3, accounts, and contract...</div>;
     // }
     return (
-      <div className="App">
-        <Interface />
+      <div className="container">
+        <BrowserRouter>
+          <Header />
+          <div className="row">
+            <div className="col-md-8">
+              <Switch>
+                <Route exact path="/" component={Dashboard} />
+                <Route exact path="/orders" component={Orders} />} />
+              </Switch>
+            </div>
+            <Sidebar />
+          </div>
+          
+        </BrowserRouter>
       </div>
     );
   }

@@ -16,7 +16,6 @@ const CardHeader = styled.div`
     h3 {
         margin: 0px;
         font-size: 14px;
-        font-family: Courier, monospace;
         font-weight: bold;
     }
 `;
