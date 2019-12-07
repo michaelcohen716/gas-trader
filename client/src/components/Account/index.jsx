@@ -24,6 +24,7 @@ const Account = () => {
 
     useEffect(() => {
         console.log('one time.');
+        getAccount();
     }, []);
 
 return (
@@ -31,7 +32,7 @@ return (
         {
             account ? (
                 <div className="row">
-                    <div className="col-md-12">
+                    <div className="col-md-12 text-center">
                         <h1>Buy buy buy</h1>
                     </div>
                 </div>
