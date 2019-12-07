@@ -1,4 +1,6 @@
 const path = require("path");
+const HDWalletProvider = require('truffle-hdwallet-provider');
+const walletFile = require('./wallet.json');
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -7,16 +9,18 @@ module.exports = {
   networks: {
     develop: {
       port: 8545
+    },
+    ropsten: {
+      provider: function () {
+        return new HDWalletProvider(walletFile.ropsten_mnemonics, walletFile.ropsten_provider);
+      },
+      network_id: 3,
+      gasPrice: 10000000000
     }
   },
-  solc: {
-    version: "0.4.24",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200   // Optimize for how many times you intend to run the code
-      },
-      evmVersion: "homestead"  // Default: "byzantium"
+  compilers: {
+    solc: {
+      version: "0.4.24"
     }
   }
 };
