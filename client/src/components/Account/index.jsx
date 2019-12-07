@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import getWeb3 from "../../getWeb3";
 import Card from '../Card';
 import Button from '../Button';
+import InputField from '../InputField';
 
-const Account = () => {
+const Account = ({ price }) => {
 
     const [account, setAccount] = useState(null);
+    const [amount, setAmount] = useState('');
 
     async function getAccount() {
 
@@ -22,17 +24,25 @@ const Account = () => {
 
     }
 
+    const startTransaction = () => {
+        console.log(amount);
+        alert("Start it.");
+    };
+
     useEffect(() => {
         console.log('one time.');
+        getAccount();
     }, []);
 
 return (
-    <Card title={account ? 'Your Account' : 'Hi Stranger'}>
+    <Card title={account ? 'Mint Tokens' : 'Hi Stranger'}>
         {
             account ? (
                 <div className="row">
-                    <div className="col-md-12">
-                        <h1>Buy buy buy</h1>
+                    <div className="col-md-12 text-center">
+                        <InputField value={amount} placeholder="100" onChange={ev => setAmount(ev.target.value)} />
+                        <strong>Total:</strong> { parseFloat(amount * price, 2) }
+                        <Button onClick={startTransaction}>Start Transaction</Button>
                     </div>
                 </div>
             ) : (
@@ -50,5 +60,8 @@ return (
 }
 
 
+Account.defaultProps = {
+    price: 12.13
+};
 
 export default Account;
