@@ -25,7 +25,7 @@
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.4.24;\n\nimport \"chainlink/contracts/ChainlinkClient.sol\";\n\ninterface ERC20 {\n  function balanceOf(address _address) returns(uint);\n}\n\n\ncontract GasOracle is ChainlinkClient {\n  uint256 ORACLE_PAYMENT = 1 * LINK;\n  bytes32 jobId;\n\n  uint currentGasPrice;\n\n  event OracleUpdated(uint newPrice);\n\n  address LINK_ADDRESS_ROPSTEN = 0x20fE562d797A42Dcb3399062AE9546cd06f63280;\n  address ORACLE_ADDRESS_ROPSTEN = 0xc99B3D447826532722E41bc36e644ba3479E4365; // AMBERDATA\n\n  constructor (bytes32 _jobId) public {\n    setPublicChainlinkToken();\n    jobId = _jobId;\n  }\n\n  // only works if contract is funded with > 1 LINK\n  /* bool == true > predictions, bool == false > percentiles */\n  function createRequest(bool predictions) public returns (bytes32 requestId) {\n      Chainlink.Request memory req = buildChainlinkRequest(\n          jobId,\n          this,\n          this.fulfill.selector\n      );\n\n      if(predictions){\n        req.add(\"extPath\", \"transactions/gas/predictions\");\n        req.add(\"path\", \"payload.average.gasPrice\");\n      } else {\n        req.add(\"extPath\", \"transactions/gas/percentiles\");\n        req.add(\"path\", \"payload.percentile_060\");\n        req.addInt(\"times\", 10000);\n      }\n\n      requestId = sendChainlinkRequestTo(ORACLE_ADDRESS_ROPSTEN, req, ORACLE_PAYMENT);\n  }\n\n  function fulfill(bytes32 _requestId, uint256 _gasPrice)\n    public\n    recordChainlinkFulfillment(_requestId)\n  {\n    currentGasPrice = _gasPrice;\n    emit OracleUpdated(_gasPrice);\n  }\n\n  function getCurrentGasPrice() public view returns(uint _currentGasPrice){\n    return currentGasPrice;\n  }\n\n  function getLinkBalance() view returns (uint _balance){\n    return ERC20(LINK_ADDRESS_ROPSTEN).balanceOf(address(this));\n  }\n\n}\n",
+  "source": "pragma solidity ^0.4.24;\n\nimport \"chainlink/contracts/ChainlinkClient.sol\";\n\ninterface ERC20 {\n  function balanceOf(address _address) returns(uint);\n}\n\n\ncontract GasOracle is ChainlinkClient {\n  uint256 ORACLE_PAYMENT = 1 * LINK;\n  bytes32 jobId;\n\n  uint currentGasPrice;\n\n  event OracleUpdated(uint newPrice);\n\n  address LINK_ADDRESS_ROPSTEN = 0x20fE562d797A42Dcb3399062AE9546cd06f63280;\n  address ORACLE_ADDRESS_ROPSTEN = 0xc99B3D447826532722E41bc36e644ba3479E4365; // AMBERDATA\n\n  constructor (bytes32 _jobId) public {\n    setPublicChainlinkToken();\n    jobId = _jobId;\n  }\n\n  // only works if contract is funded with > 1 LINK\n  /* bool == true > predictions, bool == false > percentiles */\n  function createRequest() public returns (bytes32 requestId) {\n      Chainlink.Request memory req = buildChainlinkRequest(\n          jobId,\n          this,\n          this.fulfill.selector\n      );\n\n      req.add(\"extPath\", \"transactions/gas/predictions\");\n      req.add(\"path\", \"payload.average.gasPrice\");\n\n      requestId = sendChainlinkRequestTo(ORACLE_ADDRESS_ROPSTEN, req, ORACLE_PAYMENT);\n  }\n\n  function fulfill(bytes32 _requestId, uint256 _gasPrice)\n    public\n    recordChainlinkFulfillment(_requestId)\n  {\n    currentGasPrice = _gasPrice;\n    emit OracleUpdated(_gasPrice);\n  }\n\n  function getCurrentGasPrice() public view returns(uint _currentGasPrice){\n    return currentGasPrice;\n  }\n\n  function getLinkBalance() view returns (uint _balance){\n    return ERC20(LINK_ADDRESS_ROPSTEN).balanceOf(address(this));\n  }\n\n  function random() private view returns (uint) {\n    return uint(block.blockhash(block.number-1))%5 + 1;\n    // returns number between 1 and 5 \n  }\n\n}\n",
   "sourcePath": "/Users/michaeljcohen/Desktop/projects/gas-trader/contracts/GasOracle.sol",
   "ast": {
     "absolutePath": "/Users/michaeljcohen/Desktop/projects/gas-trader/contracts/GasOracle.sol",
@@ -34,10 +34,10 @@
         10
       ],
       "GasOracle": [
-        154
+        147
       ]
     },
-    "id": 155,
+    "id": 148,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -56,8 +56,8 @@
         "file": "chainlink/contracts/ChainlinkClient.sol",
         "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 155,
-        "sourceUnit": 898,
+        "scope": 148,
+        "sourceUnit": 891,
         "src": "26:49:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -159,7 +159,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 155,
+        "scope": 148,
         "src": "77:73:0"
       },
       {
@@ -171,10 +171,10 @@
               "id": 11,
               "name": "ChainlinkClient",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 897,
+              "referencedDeclaration": 890,
               "src": "175:15:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ChainlinkClient_$897",
+                "typeIdentifier": "t_contract$_ChainlinkClient_$890",
                 "typeString": "contract ChainlinkClient"
               }
             },
@@ -184,15 +184,15 @@
           }
         ],
         "contractDependencies": [
-          897
+          890
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 154,
+        "id": 147,
         "linearizedBaseContracts": [
-          154,
-          897
+          147,
+          890
         ],
         "name": "GasOracle",
         "nodeType": "ContractDefinition",
@@ -202,7 +202,7 @@
             "id": 17,
             "name": "ORACLE_PAYMENT",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "195:33:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -257,7 +257,7 @@
                 "name": "LINK",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 483,
+                "referencedDeclaration": 476,
                 "src": "224:4:0",
                 "typeDescriptions": {
                   "typeIdentifier": "t_uint256",
@@ -277,7 +277,7 @@
             "id": 19,
             "name": "jobId",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "232:13:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -303,7 +303,7 @@
             "id": 21,
             "name": "currentGasPrice",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "250:20:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -371,7 +371,7 @@
             "id": 28,
             "name": "LINK_ADDRESS_ROPSTEN",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "314:73:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -414,7 +414,7 @@
             "id": 31,
             "name": "ORACLE_ADDRESS_ROPSTEN",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "391:75:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -468,7 +468,7 @@
                       "name": "setPublicChainlinkToken",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 702,
+                      "referencedDeclaration": 695,
                       "src": "526:23:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -589,7 +589,7 @@
               "parameters": [],
               "src": "520:0:0"
             },
-            "scope": 154,
+            "scope": 147,
             "src": "484:92:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -597,37 +597,37 @@
           },
           {
             "body": {
-              "id": 110,
+              "id": 83,
               "nodeType": "Block",
-              "src": "772:534:0",
+              "src": "756:337:0",
               "statements": [
                 {
                   "assignments": [
-                    54
+                    52
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 54,
+                      "id": 52,
                       "name": "req",
                       "nodeType": "VariableDeclaration",
-                      "scope": 111,
-                      "src": "780:28:0",
+                      "scope": 84,
+                      "src": "764:28:0",
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                        "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                         "typeString": "struct Chainlink.Request"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 53,
+                        "id": 51,
                         "name": "Chainlink.Request",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 233,
-                        "src": "780:17:0",
+                        "referencedDeclaration": 226,
+                        "src": "764:17:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_Request_$233_storage_ptr",
+                          "typeIdentifier": "t_struct$_Request_$226_storage_ptr",
                           "typeString": "struct Chainlink.Request"
                         }
                       },
@@ -635,18 +635,18 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 62,
+                  "id": 60,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 56,
+                        "id": 54,
                         "name": "jobId",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 19,
-                        "src": "844:5:0",
+                        "src": "828:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
                           "typeString": "bytes32"
@@ -654,14 +654,14 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 57,
+                        "id": 55,
                         "name": "this",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2041,
-                        "src": "861:4:0",
+                        "referencedDeclaration": 2034,
+                        "src": "845:4:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_GasOracle_$154",
+                          "typeIdentifier": "t_contract$_GasOracle_$147",
                           "typeString": "contract GasOracle"
                         }
                       },
@@ -671,32 +671,32 @@
                           "argumentTypes": null,
                           "expression": {
                             "argumentTypes": null,
-                            "id": 58,
+                            "id": 56,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2041,
-                            "src": "877:4:0",
+                            "referencedDeclaration": 2034,
+                            "src": "861:4:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           },
-                          "id": 59,
+                          "id": 57,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "memberName": "fulfill",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 130,
-                          "src": "877:12:0",
+                          "referencedDeclaration": 103,
+                          "src": "861:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_uint256_$returns$__$",
                             "typeString": "function (bytes32,uint256) external"
                           }
                         },
-                        "id": 60,
+                        "id": 58,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -704,7 +704,7 @@
                         "memberName": "selector",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": null,
-                        "src": "877:21:0",
+                        "src": "861:21:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -718,7 +718,7 @@
                           "typeString": "bytes32"
                         },
                         {
-                          "typeIdentifier": "t_contract$_GasOracle_$154",
+                          "typeIdentifier": "t_contract$_GasOracle_$147",
                           "typeString": "contract GasOracle"
                         },
                         {
@@ -726,18 +726,18 @@
                           "typeString": "bytes4"
                         }
                       ],
-                      "id": 55,
+                      "id": 53,
                       "name": "buildChainlinkRequest",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 556,
-                      "src": "811:21:0",
+                      "referencedDeclaration": 549,
+                      "src": "795:21:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_bytes32_$_t_address_$_t_bytes4_$returns$_t_struct$_Request_$233_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes32_$_t_address_$_t_bytes4_$returns$_t_struct$_Request_$226_memory_ptr_$",
                         "typeString": "function (bytes32,address,bytes4) pure returns (struct Chainlink.Request memory)"
                       }
                     },
-                    "id": 61,
+                    "id": 59,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -745,548 +745,225 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "811:95:0",
+                    "src": "795:95:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                      "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                       "typeString": "struct Chainlink.Request memory"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "780:126:0"
-                },
-                {
-                  "condition": {
-                    "argumentTypes": null,
-                    "id": 63,
-                    "name": "predictions",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": [],
-                    "referencedDeclaration": 46,
-                    "src": "918:11:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_bool",
-                      "typeString": "bool"
-                    }
-                  },
-                  "falseBody": {
-                    "id": 100,
-                    "nodeType": "Block",
-                    "src": "1058:156:0",
-                    "statements": [
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "65787450617468",
-                              "id": 82,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1076:9:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              "value": "extPath"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7472616e73616374696f6e732f6761732f70657263656e74696c6573",
-                              "id": 83,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1087:30:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_8914524e5402e3737651902dd7e8b71c0ba41d940fc6847d977ddc2c9e088a70",
-                                "typeString": "literal_string \"transactions/gas/percentiles\""
-                              },
-                              "value": "transactions/gas/percentiles"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_8914524e5402e3737651902dd7e8b71c0ba41d940fc6847d977ddc2c9e088a70",
-                                "typeString": "literal_string \"transactions/gas/percentiles\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 79,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1068:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 81,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1068:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 84,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1068:50:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 85,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1068:50:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "70617468",
-                              "id": 89,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1136:6:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              "value": "path"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7061796c6f61642e70657263656e74696c655f303630",
-                              "id": 90,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1144:24:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_29997e07535603212e986205e0514e6a06300a22297c77f5a8b48d2e201bedd2",
-                                "typeString": "literal_string \"payload.percentile_060\""
-                              },
-                              "value": "payload.percentile_060"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_29997e07535603212e986205e0514e6a06300a22297c77f5a8b48d2e201bedd2",
-                                "typeString": "literal_string \"payload.percentile_060\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 86,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1128:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 88,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1128:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 91,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1128:41:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 92,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1128:41:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "74696d6573",
-                              "id": 96,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1190:7:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_0bfab8028df7ddaceaf0a173b093c1269c5dd964bbe8cc0c6b210e554970802b",
-                                "typeString": "literal_string \"times\""
-                              },
-                              "value": "times"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "3130303030",
-                              "id": 97,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "number",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1199:5:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_rational_10000_by_1",
-                                "typeString": "int_const 10000"
-                              },
-                              "value": "10000"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_0bfab8028df7ddaceaf0a173b093c1269c5dd964bbe8cc0c6b210e554970802b",
-                                "typeString": "literal_string \"times\""
-                              },
-                              {
-                                "typeIdentifier": "t_rational_10000_by_1",
-                                "typeString": "int_const 10000"
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 93,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1179:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 95,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "addInt",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 378,
-                            "src": "1179:10:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_int256_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,int256) pure"
-                            }
-                          },
-                          "id": 98,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1179:26:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 99,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1179:26:0"
-                      }
-                    ]
-                  },
-                  "id": 101,
-                  "nodeType": "IfStatement",
-                  "src": "915:299:0",
-                  "trueBody": {
-                    "id": 78,
-                    "nodeType": "Block",
-                    "src": "930:122:0",
-                    "statements": [
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "65787450617468",
-                              "id": 67,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "948:9:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              "value": "extPath"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7472616e73616374696f6e732f6761732f70726564696374696f6e73",
-                              "id": 68,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "959:30:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
-                                "typeString": "literal_string \"transactions/gas/predictions\""
-                              },
-                              "value": "transactions/gas/predictions"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
-                                "typeString": "literal_string \"transactions/gas/predictions\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 64,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "940:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 66,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "940:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 69,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "940:50:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 70,
-                        "nodeType": "ExpressionStatement",
-                        "src": "940:50:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "70617468",
-                              "id": 74,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1008:6:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              "value": "path"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7061796c6f61642e617665726167652e6761735072696365",
-                              "id": 75,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1016:26:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
-                                "typeString": "literal_string \"payload.average.gasPrice\""
-                              },
-                              "value": "payload.average.gasPrice"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
-                                "typeString": "literal_string \"payload.average.gasPrice\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 71,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1000:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 73,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1000:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 76,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1000:43:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 77,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1000:43:0"
-                      }
-                    ]
-                  }
+                  "src": "764:126:0"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 108,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "65787450617468",
+                        "id": 64,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "907:9:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
+                          "typeString": "literal_string \"extPath\""
+                        },
+                        "value": "extPath"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "7472616e73616374696f6e732f6761732f70726564696374696f6e73",
+                        "id": 65,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "918:30:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
+                          "typeString": "literal_string \"transactions/gas/predictions\""
+                        },
+                        "value": "transactions/gas/predictions"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
+                          "typeString": "literal_string \"extPath\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
+                          "typeString": "literal_string \"transactions/gas/predictions\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 61,
+                        "name": "req",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52,
+                        "src": "899:3:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
+                          "typeString": "struct Chainlink.Request memory"
+                        }
+                      },
+                      "id": 63,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "add",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 319,
+                      "src": "899:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$226_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$226_memory_ptr_$",
+                        "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
+                      }
+                    },
+                    "id": 66,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "899:50:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 67,
+                  "nodeType": "ExpressionStatement",
+                  "src": "899:50:0"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "70617468",
+                        "id": 71,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "965:6:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
+                          "typeString": "literal_string \"path\""
+                        },
+                        "value": "path"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "7061796c6f61642e617665726167652e6761735072696365",
+                        "id": 72,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "973:26:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
+                          "typeString": "literal_string \"payload.average.gasPrice\""
+                        },
+                        "value": "payload.average.gasPrice"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
+                          "typeString": "literal_string \"path\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
+                          "typeString": "literal_string \"payload.average.gasPrice\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 68,
+                        "name": "req",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52,
+                        "src": "957:3:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
+                          "typeString": "struct Chainlink.Request memory"
+                        }
+                      },
+                      "id": 70,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "add",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 319,
+                      "src": "957:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$226_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$226_memory_ptr_$",
+                        "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
+                      }
+                    },
+                    "id": 73,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "957:43:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 74,
+                  "nodeType": "ExpressionStatement",
+                  "src": "957:43:0"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 81,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 102,
+                      "id": 75,
                       "name": "requestId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 49,
-                      "src": "1222:9:0",
+                      "referencedDeclaration": 47,
+                      "src": "1009:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
                         "typeString": "bytes32"
@@ -1299,12 +976,12 @@
                       "arguments": [
                         {
                           "argumentTypes": null,
-                          "id": 104,
+                          "id": 77,
                           "name": "ORACLE_ADDRESS_ROPSTEN",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 31,
-                          "src": "1257:22:0",
+                          "src": "1044:22:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -1312,25 +989,25 @@
                         },
                         {
                           "argumentTypes": null,
-                          "id": 105,
+                          "id": 78,
                           "name": "req",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 54,
-                          "src": "1281:3:0",
+                          "referencedDeclaration": 52,
+                          "src": "1068:3:0",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                            "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                             "typeString": "struct Chainlink.Request memory"
                           }
                         },
                         {
                           "argumentTypes": null,
-                          "id": 106,
+                          "id": 79,
                           "name": "ORACLE_PAYMENT",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 17,
-                          "src": "1286:14:0",
+                          "src": "1073:14:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1344,7 +1021,7 @@
                             "typeString": "address"
                           },
                           {
-                            "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                            "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                             "typeString": "struct Chainlink.Request memory"
                           },
                           {
@@ -1352,18 +1029,18 @@
                             "typeString": "uint256"
                           }
                         ],
-                        "id": 103,
+                        "id": 76,
                         "name": "sendChainlinkRequestTo",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 628,
-                        "src": "1234:22:0",
+                        "referencedDeclaration": 621,
+                        "src": "1021:22:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_struct$_Request_$233_memory_ptr_$_t_uint256_$returns$_t_bytes32_$",
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_struct$_Request_$226_memory_ptr_$_t_uint256_$returns$_t_bytes32_$",
                           "typeString": "function (address,struct Chainlink.Request memory,uint256) returns (bytes32)"
                         }
                       },
-                      "id": 107,
+                      "id": 80,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1371,26 +1048,26 @@
                       "lValueRequested": false,
                       "names": [],
                       "nodeType": "FunctionCall",
-                      "src": "1234:67:0",
+                      "src": "1021:67:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
                         "typeString": "bytes32"
                       }
                     },
-                    "src": "1222:79:0",
+                    "src": "1009:79:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
                     }
                   },
-                  "id": 109,
+                  "id": 82,
                   "nodeType": "ExpressionStatement",
-                  "src": "1222:79:0"
+                  "src": "1009:79:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 111,
+            "id": 84,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -1398,50 +1075,23 @@
             "name": "createRequest",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 47,
+              "id": 45,
               "nodeType": "ParameterList",
-              "parameters": [
-                {
-                  "constant": false,
-                  "id": 46,
-                  "name": "predictions",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 111,
-                  "src": "719:16:0",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_bool",
-                    "typeString": "bool"
-                  },
-                  "typeName": {
-                    "id": 45,
-                    "name": "bool",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "719:4:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_bool",
-                      "typeString": "bool"
-                    }
-                  },
-                  "value": null,
-                  "visibility": "internal"
-                }
-              ],
-              "src": "718:18:0"
+              "parameters": [],
+              "src": "718:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 50,
+              "id": 48,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 49,
+                  "id": 47,
                   "name": "requestId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 111,
-                  "src": "753:17:0",
+                  "scope": 84,
+                  "src": "737:17:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1449,10 +1099,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 48,
+                    "id": 46,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "753:7:0",
+                    "src": "737:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -1462,36 +1112,36 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "752:19:0"
+              "src": "736:19:0"
             },
-            "scope": 154,
-            "src": "696:610:0",
+            "scope": 147,
+            "src": "696:397:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 129,
+              "id": 102,
               "nodeType": "Block",
-              "src": "1422:73:0",
+              "src": "1209:73:0",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 123,
+                    "id": 96,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 121,
+                      "id": 94,
                       "name": "currentGasPrice",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 21,
-                      "src": "1428:15:0",
+                      "src": "1215:15:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1501,26 +1151,26 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 122,
+                      "id": 95,
                       "name": "_gasPrice",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 115,
-                      "src": "1446:9:0",
+                      "referencedDeclaration": 88,
+                      "src": "1233:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "1428:27:0",
+                    "src": "1215:27:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 124,
+                  "id": 97,
                   "nodeType": "ExpressionStatement",
-                  "src": "1428:27:0"
+                  "src": "1215:27:0"
                 },
                 {
                   "eventCall": {
@@ -1528,12 +1178,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 126,
+                        "id": 99,
                         "name": "_gasPrice",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 115,
-                        "src": "1480:9:0",
+                        "referencedDeclaration": 88,
+                        "src": "1267:9:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -1547,18 +1197,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 125,
+                      "id": 98,
                       "name": "OracleUpdated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 25,
-                      "src": "1466:13:0",
+                      "src": "1253:13:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
                       }
                     },
-                    "id": 127,
+                    "id": 100,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1566,20 +1216,20 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1466:24:0",
+                    "src": "1253:24:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 128,
+                  "id": 101,
                   "nodeType": "EmitStatement",
-                  "src": "1461:29:0"
+                  "src": "1248:29:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 130,
+            "id": 103,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -1588,49 +1238,49 @@
                 "arguments": [
                   {
                     "argumentTypes": null,
-                    "id": 118,
+                    "id": 91,
                     "name": "_requestId",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 113,
-                    "src": "1408:10:0",
+                    "referencedDeclaration": 86,
+                    "src": "1195:10:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
                     }
                   }
                 ],
-                "id": 119,
+                "id": 92,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 117,
+                  "id": 90,
                   "name": "recordChainlinkFulfillment",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 879,
-                  "src": "1381:26:0",
+                  "referencedDeclaration": 872,
+                  "src": "1168:26:0",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$_t_bytes32_$",
                     "typeString": "modifier (bytes32)"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "1381:38:0"
+                "src": "1168:38:0"
               }
             ],
             "name": "fulfill",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 116,
+              "id": 89,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 113,
+                  "id": 86,
                   "name": "_requestId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 130,
-                  "src": "1327:18:0",
+                  "scope": 103,
+                  "src": "1114:18:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1638,10 +1288,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 112,
+                    "id": 85,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1327:7:0",
+                    "src": "1114:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -1652,11 +1302,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 115,
+                  "id": 88,
                   "name": "_gasPrice",
                   "nodeType": "VariableDeclaration",
-                  "scope": 130,
-                  "src": "1347:17:0",
+                  "scope": 103,
+                  "src": "1134:17:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1664,10 +1314,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 114,
+                    "id": 87,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1347:7:0",
+                    "src": "1134:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1677,50 +1327,50 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1326:39:0"
+              "src": "1113:39:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 120,
+              "id": 93,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1422:0:0"
+              "src": "1209:0:0"
             },
-            "scope": 154,
-            "src": "1310:185:0",
+            "scope": 147,
+            "src": "1097:185:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 137,
+              "id": 110,
               "nodeType": "Block",
-              "src": "1571:33:0",
+              "src": "1358:33:0",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 135,
+                    "id": 108,
                     "name": "currentGasPrice",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
                     "referencedDeclaration": 21,
-                    "src": "1584:15:0",
+                    "src": "1371:15:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 134,
-                  "id": 136,
+                  "functionReturnParameters": 107,
+                  "id": 109,
                   "nodeType": "Return",
-                  "src": "1577:22:0"
+                  "src": "1364:22:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 138,
+            "id": 111,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -1728,23 +1378,23 @@
             "name": "getCurrentGasPrice",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 131,
+              "id": 104,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1526:2:0"
+              "src": "1313:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 134,
+              "id": 107,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 133,
+                  "id": 106,
                   "name": "_currentGasPrice",
                   "nodeType": "VariableDeclaration",
-                  "scope": 138,
-                  "src": "1549:21:0",
+                  "scope": 111,
+                  "src": "1336:21:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1752,10 +1402,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 132,
+                    "id": 105,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1549:4:0",
+                    "src": "1336:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1765,19 +1415,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1548:23:0"
+              "src": "1335:23:0"
             },
-            "scope": 154,
-            "src": "1499:105:0",
+            "scope": 147,
+            "src": "1286:105:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 152,
+              "id": 125,
               "nodeType": "Block",
-              "src": "1662:70:0",
+              "src": "1449:70:0",
               "statements": [
                 {
                   "expression": {
@@ -1788,14 +1438,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 148,
+                            "id": 121,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2041,
-                            "src": "1721:4:0",
+                            "referencedDeclaration": 2034,
+                            "src": "1508:4:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           }
@@ -1803,24 +1453,24 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           ],
-                          "id": 147,
+                          "id": 120,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "nodeType": "ElementaryTypeNameExpression",
-                          "src": "1713:7:0",
+                          "src": "1500:7:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_address_$",
                             "typeString": "type(address)"
                           },
                           "typeName": "address"
                         },
-                        "id": 149,
+                        "id": 122,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1828,7 +1478,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "1713:13:0",
+                        "src": "1500:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1847,12 +1497,12 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 144,
+                            "id": 117,
                             "name": "LINK_ADDRESS_ROPSTEN",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 28,
-                            "src": "1681:20:0",
+                            "src": "1468:20:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
@@ -1866,18 +1516,18 @@
                               "typeString": "address"
                             }
                           ],
-                          "id": 143,
+                          "id": 116,
                           "name": "ERC20",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 10,
-                          "src": "1675:5:0",
+                          "src": "1462:5:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_contract$_ERC20_$10_$",
                             "typeString": "type(contract ERC20)"
                           }
                         },
-                        "id": 145,
+                        "id": 118,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1885,13 +1535,13 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "1675:27:0",
+                        "src": "1462:27:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_ERC20_$10",
                           "typeString": "contract ERC20"
                         }
                       },
-                      "id": 146,
+                      "id": 119,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1899,13 +1549,13 @@
                       "memberName": "balanceOf",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": 9,
-                      "src": "1675:37:0",
+                      "src": "1462:37:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$_t_uint256_$",
                         "typeString": "function (address) external returns (uint256)"
                       }
                     },
-                    "id": 150,
+                    "id": 123,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1913,21 +1563,21 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1675:52:0",
+                    "src": "1462:52:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 142,
-                  "id": 151,
+                  "functionReturnParameters": 115,
+                  "id": 124,
                   "nodeType": "Return",
-                  "src": "1668:59:0"
+                  "src": "1455:59:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 153,
+            "id": 126,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -1935,23 +1585,23 @@
             "name": "getLinkBalance",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 139,
+              "id": 112,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1631:2:0"
+              "src": "1418:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 142,
+              "id": 115,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 141,
+                  "id": 114,
                   "name": "_balance",
                   "nodeType": "VariableDeclaration",
-                  "scope": 153,
-                  "src": "1648:13:0",
+                  "scope": 126,
+                  "src": "1435:13:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1959,10 +1609,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 140,
+                    "id": 113,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1648:4:0",
+                    "src": "1435:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1972,20 +1622,318 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1647:15:0"
+              "src": "1434:15:0"
             },
-            "scope": 154,
-            "src": "1608:124:0",
+            "scope": 147,
+            "src": "1395:124:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 145,
+              "nodeType": "Block",
+              "src": "1569:100:0",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 143,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 141,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "arguments": [
+                              {
+                                "argumentTypes": null,
+                                "commonType": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                },
+                                "id": 137,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftExpression": {
+                                  "argumentTypes": null,
+                                  "expression": {
+                                    "argumentTypes": null,
+                                    "id": 134,
+                                    "name": "block",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 1989,
+                                    "src": "1603:5:0",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_magic_block",
+                                      "typeString": "block"
+                                    }
+                                  },
+                                  "id": 135,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "memberName": "number",
+                                  "nodeType": "MemberAccess",
+                                  "referencedDeclaration": null,
+                                  "src": "1603:12:0",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  }
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "-",
+                                "rightExpression": {
+                                  "argumentTypes": null,
+                                  "hexValue": "31",
+                                  "id": 136,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "kind": "number",
+                                  "lValueRequested": false,
+                                  "nodeType": "Literal",
+                                  "src": "1616:1:0",
+                                  "subdenomination": null,
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_1_by_1",
+                                    "typeString": "int_const 1"
+                                  },
+                                  "value": "1"
+                                },
+                                "src": "1603:14:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              ],
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 132,
+                                "name": "block",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 1989,
+                                "src": "1587:5:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_magic_block",
+                                  "typeString": "block"
+                                }
+                              },
+                              "id": 133,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "blockhash",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1587:15:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_blockhash_view$_t_uint256_$returns$_t_bytes32_$",
+                                "typeString": "function (uint256) view returns (bytes32)"
+                              }
+                            },
+                            "id": 138,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "1587:31:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bytes32",
+                              "typeString": "bytes32"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_bytes32",
+                              "typeString": "bytes32"
+                            }
+                          ],
+                          "id": 131,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1582:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_uint256_$",
+                            "typeString": "type(uint256)"
+                          },
+                          "typeName": "uint"
+                        },
+                        "id": 139,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1582:37:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "%",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "hexValue": "35",
+                        "id": 140,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1620:1:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_rational_5_by_1",
+                          "typeString": "int_const 5"
+                        },
+                        "value": "5"
+                      },
+                      "src": "1582:39:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "31",
+                      "id": 142,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1624:1:0",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_1_by_1",
+                        "typeString": "int_const 1"
+                      },
+                      "value": "1"
+                    },
+                    "src": "1582:43:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 130,
+                  "id": 144,
+                  "nodeType": "Return",
+                  "src": "1575:50:0"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 146,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "random",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 127,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1538:2:0"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 130,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 129,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 146,
+                  "src": "1563:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 128,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1563:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1562:6:0"
+            },
+            "scope": 147,
+            "src": "1523:146:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "private"
           }
         ],
-        "scope": 155,
-        "src": "153:1582:0"
+        "scope": 148,
+        "src": "153:1519:0"
       }
     ],
-    "src": "0:1736:0"
+    "src": "0:1673:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/michaeljcohen/Desktop/projects/gas-trader/contracts/GasOracle.sol",
@@ -1994,10 +1942,10 @@
         10
       ],
       "GasOracle": [
-        154
+        147
       ]
     },
-    "id": 155,
+    "id": 148,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -2016,8 +1964,8 @@
         "file": "chainlink/contracts/ChainlinkClient.sol",
         "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 155,
-        "sourceUnit": 898,
+        "scope": 148,
+        "sourceUnit": 891,
         "src": "26:49:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -2119,7 +2067,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 155,
+        "scope": 148,
         "src": "77:73:0"
       },
       {
@@ -2131,10 +2079,10 @@
               "id": 11,
               "name": "ChainlinkClient",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 897,
+              "referencedDeclaration": 890,
               "src": "175:15:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ChainlinkClient_$897",
+                "typeIdentifier": "t_contract$_ChainlinkClient_$890",
                 "typeString": "contract ChainlinkClient"
               }
             },
@@ -2144,15 +2092,15 @@
           }
         ],
         "contractDependencies": [
-          897
+          890
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 154,
+        "id": 147,
         "linearizedBaseContracts": [
-          154,
-          897
+          147,
+          890
         ],
         "name": "GasOracle",
         "nodeType": "ContractDefinition",
@@ -2162,7 +2110,7 @@
             "id": 17,
             "name": "ORACLE_PAYMENT",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "195:33:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2217,7 +2165,7 @@
                 "name": "LINK",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 483,
+                "referencedDeclaration": 476,
                 "src": "224:4:0",
                 "typeDescriptions": {
                   "typeIdentifier": "t_uint256",
@@ -2237,7 +2185,7 @@
             "id": 19,
             "name": "jobId",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "232:13:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2263,7 +2211,7 @@
             "id": 21,
             "name": "currentGasPrice",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "250:20:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2331,7 +2279,7 @@
             "id": 28,
             "name": "LINK_ADDRESS_ROPSTEN",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "314:73:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2374,7 +2322,7 @@
             "id": 31,
             "name": "ORACLE_ADDRESS_ROPSTEN",
             "nodeType": "VariableDeclaration",
-            "scope": 154,
+            "scope": 147,
             "src": "391:75:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2428,7 +2376,7 @@
                       "name": "setPublicChainlinkToken",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 702,
+                      "referencedDeclaration": 695,
                       "src": "526:23:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
@@ -2549,7 +2497,7 @@
               "parameters": [],
               "src": "520:0:0"
             },
-            "scope": 154,
+            "scope": 147,
             "src": "484:92:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -2557,37 +2505,37 @@
           },
           {
             "body": {
-              "id": 110,
+              "id": 83,
               "nodeType": "Block",
-              "src": "772:534:0",
+              "src": "756:337:0",
               "statements": [
                 {
                   "assignments": [
-                    54
+                    52
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 54,
+                      "id": 52,
                       "name": "req",
                       "nodeType": "VariableDeclaration",
-                      "scope": 111,
-                      "src": "780:28:0",
+                      "scope": 84,
+                      "src": "764:28:0",
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                        "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                         "typeString": "struct Chainlink.Request"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 53,
+                        "id": 51,
                         "name": "Chainlink.Request",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 233,
-                        "src": "780:17:0",
+                        "referencedDeclaration": 226,
+                        "src": "764:17:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_Request_$233_storage_ptr",
+                          "typeIdentifier": "t_struct$_Request_$226_storage_ptr",
                           "typeString": "struct Chainlink.Request"
                         }
                       },
@@ -2595,18 +2543,18 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 62,
+                  "id": 60,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 56,
+                        "id": 54,
                         "name": "jobId",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 19,
-                        "src": "844:5:0",
+                        "src": "828:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
                           "typeString": "bytes32"
@@ -2614,14 +2562,14 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 57,
+                        "id": 55,
                         "name": "this",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2041,
-                        "src": "861:4:0",
+                        "referencedDeclaration": 2034,
+                        "src": "845:4:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_GasOracle_$154",
+                          "typeIdentifier": "t_contract$_GasOracle_$147",
                           "typeString": "contract GasOracle"
                         }
                       },
@@ -2631,32 +2579,32 @@
                           "argumentTypes": null,
                           "expression": {
                             "argumentTypes": null,
-                            "id": 58,
+                            "id": 56,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2041,
-                            "src": "877:4:0",
+                            "referencedDeclaration": 2034,
+                            "src": "861:4:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           },
-                          "id": 59,
+                          "id": 57,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "memberName": "fulfill",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 130,
-                          "src": "877:12:0",
+                          "referencedDeclaration": 103,
+                          "src": "861:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_uint256_$returns$__$",
                             "typeString": "function (bytes32,uint256) external"
                           }
                         },
-                        "id": 60,
+                        "id": 58,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -2664,7 +2612,7 @@
                         "memberName": "selector",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": null,
-                        "src": "877:21:0",
+                        "src": "861:21:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -2678,7 +2626,7 @@
                           "typeString": "bytes32"
                         },
                         {
-                          "typeIdentifier": "t_contract$_GasOracle_$154",
+                          "typeIdentifier": "t_contract$_GasOracle_$147",
                           "typeString": "contract GasOracle"
                         },
                         {
@@ -2686,18 +2634,18 @@
                           "typeString": "bytes4"
                         }
                       ],
-                      "id": 55,
+                      "id": 53,
                       "name": "buildChainlinkRequest",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 556,
-                      "src": "811:21:0",
+                      "referencedDeclaration": 549,
+                      "src": "795:21:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_bytes32_$_t_address_$_t_bytes4_$returns$_t_struct$_Request_$233_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes32_$_t_address_$_t_bytes4_$returns$_t_struct$_Request_$226_memory_ptr_$",
                         "typeString": "function (bytes32,address,bytes4) pure returns (struct Chainlink.Request memory)"
                       }
                     },
-                    "id": 61,
+                    "id": 59,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2705,548 +2653,225 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "811:95:0",
+                    "src": "795:95:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                      "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                       "typeString": "struct Chainlink.Request memory"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "780:126:0"
-                },
-                {
-                  "condition": {
-                    "argumentTypes": null,
-                    "id": 63,
-                    "name": "predictions",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": [],
-                    "referencedDeclaration": 46,
-                    "src": "918:11:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_bool",
-                      "typeString": "bool"
-                    }
-                  },
-                  "falseBody": {
-                    "id": 100,
-                    "nodeType": "Block",
-                    "src": "1058:156:0",
-                    "statements": [
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "65787450617468",
-                              "id": 82,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1076:9:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              "value": "extPath"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7472616e73616374696f6e732f6761732f70657263656e74696c6573",
-                              "id": 83,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1087:30:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_8914524e5402e3737651902dd7e8b71c0ba41d940fc6847d977ddc2c9e088a70",
-                                "typeString": "literal_string \"transactions/gas/percentiles\""
-                              },
-                              "value": "transactions/gas/percentiles"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_8914524e5402e3737651902dd7e8b71c0ba41d940fc6847d977ddc2c9e088a70",
-                                "typeString": "literal_string \"transactions/gas/percentiles\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 79,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1068:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 81,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1068:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 84,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1068:50:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 85,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1068:50:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "70617468",
-                              "id": 89,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1136:6:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              "value": "path"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7061796c6f61642e70657263656e74696c655f303630",
-                              "id": 90,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1144:24:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_29997e07535603212e986205e0514e6a06300a22297c77f5a8b48d2e201bedd2",
-                                "typeString": "literal_string \"payload.percentile_060\""
-                              },
-                              "value": "payload.percentile_060"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_29997e07535603212e986205e0514e6a06300a22297c77f5a8b48d2e201bedd2",
-                                "typeString": "literal_string \"payload.percentile_060\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 86,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1128:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 88,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1128:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 91,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1128:41:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 92,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1128:41:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "74696d6573",
-                              "id": 96,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1190:7:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_0bfab8028df7ddaceaf0a173b093c1269c5dd964bbe8cc0c6b210e554970802b",
-                                "typeString": "literal_string \"times\""
-                              },
-                              "value": "times"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "3130303030",
-                              "id": 97,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "number",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1199:5:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_rational_10000_by_1",
-                                "typeString": "int_const 10000"
-                              },
-                              "value": "10000"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_0bfab8028df7ddaceaf0a173b093c1269c5dd964bbe8cc0c6b210e554970802b",
-                                "typeString": "literal_string \"times\""
-                              },
-                              {
-                                "typeIdentifier": "t_rational_10000_by_1",
-                                "typeString": "int_const 10000"
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 93,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1179:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 95,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "addInt",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 378,
-                            "src": "1179:10:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_int256_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,int256) pure"
-                            }
-                          },
-                          "id": 98,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1179:26:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 99,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1179:26:0"
-                      }
-                    ]
-                  },
-                  "id": 101,
-                  "nodeType": "IfStatement",
-                  "src": "915:299:0",
-                  "trueBody": {
-                    "id": 78,
-                    "nodeType": "Block",
-                    "src": "930:122:0",
-                    "statements": [
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "65787450617468",
-                              "id": 67,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "948:9:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              "value": "extPath"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7472616e73616374696f6e732f6761732f70726564696374696f6e73",
-                              "id": 68,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "959:30:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
-                                "typeString": "literal_string \"transactions/gas/predictions\""
-                              },
-                              "value": "transactions/gas/predictions"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
-                                "typeString": "literal_string \"extPath\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
-                                "typeString": "literal_string \"transactions/gas/predictions\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 64,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "940:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 66,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "940:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 69,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "940:50:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 70,
-                        "nodeType": "ExpressionStatement",
-                        "src": "940:50:0"
-                      },
-                      {
-                        "expression": {
-                          "argumentTypes": null,
-                          "arguments": [
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "70617468",
-                              "id": 74,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1008:6:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              "value": "path"
-                            },
-                            {
-                              "argumentTypes": null,
-                              "hexValue": "7061796c6f61642e617665726167652e6761735072696365",
-                              "id": 75,
-                              "isConstant": false,
-                              "isLValue": false,
-                              "isPure": true,
-                              "kind": "string",
-                              "lValueRequested": false,
-                              "nodeType": "Literal",
-                              "src": "1016:26:0",
-                              "subdenomination": null,
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
-                                "typeString": "literal_string \"payload.average.gasPrice\""
-                              },
-                              "value": "payload.average.gasPrice"
-                            }
-                          ],
-                          "expression": {
-                            "argumentTypes": [
-                              {
-                                "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
-                                "typeString": "literal_string \"path\""
-                              },
-                              {
-                                "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
-                                "typeString": "literal_string \"payload.average.gasPrice\""
-                              }
-                            ],
-                            "expression": {
-                              "argumentTypes": null,
-                              "id": 71,
-                              "name": "req",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 54,
-                              "src": "1000:3:0",
-                              "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
-                                "typeString": "struct Chainlink.Request memory"
-                              }
-                            },
-                            "id": 73,
-                            "isConstant": false,
-                            "isLValue": true,
-                            "isPure": false,
-                            "lValueRequested": false,
-                            "memberName": "add",
-                            "nodeType": "MemberAccess",
-                            "referencedDeclaration": 326,
-                            "src": "1000:7:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$233_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$233_memory_ptr_$",
-                              "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
-                            }
-                          },
-                          "id": 76,
-                          "isConstant": false,
-                          "isLValue": false,
-                          "isPure": false,
-                          "kind": "functionCall",
-                          "lValueRequested": false,
-                          "names": [],
-                          "nodeType": "FunctionCall",
-                          "src": "1000:43:0",
-                          "typeDescriptions": {
-                            "typeIdentifier": "t_tuple$__$",
-                            "typeString": "tuple()"
-                          }
-                        },
-                        "id": 77,
-                        "nodeType": "ExpressionStatement",
-                        "src": "1000:43:0"
-                      }
-                    ]
-                  }
+                  "src": "764:126:0"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 108,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "65787450617468",
+                        "id": 64,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "907:9:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
+                          "typeString": "literal_string \"extPath\""
+                        },
+                        "value": "extPath"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "7472616e73616374696f6e732f6761732f70726564696374696f6e73",
+                        "id": 65,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "918:30:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
+                          "typeString": "literal_string \"transactions/gas/predictions\""
+                        },
+                        "value": "transactions/gas/predictions"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_67936a0832919bd8adf884671008ca9d11a9bc7eb35a74fd8a6db8ae39968212",
+                          "typeString": "literal_string \"extPath\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_359b96bda2c7e9f4db8494266553cfb58d9486f51176ffb5466f61db9a4eb2ff",
+                          "typeString": "literal_string \"transactions/gas/predictions\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 61,
+                        "name": "req",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52,
+                        "src": "899:3:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
+                          "typeString": "struct Chainlink.Request memory"
+                        }
+                      },
+                      "id": 63,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "add",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 319,
+                      "src": "899:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$226_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$226_memory_ptr_$",
+                        "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
+                      }
+                    },
+                    "id": 66,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "899:50:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 67,
+                  "nodeType": "ExpressionStatement",
+                  "src": "899:50:0"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "70617468",
+                        "id": 71,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "965:6:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
+                          "typeString": "literal_string \"path\""
+                        },
+                        "value": "path"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "7061796c6f61642e617665726167652e6761735072696365",
+                        "id": 72,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "973:26:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
+                          "typeString": "literal_string \"payload.average.gasPrice\""
+                        },
+                        "value": "payload.average.gasPrice"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_46f9db2921f88204395f1f47d741736216b2218e88e47f50e1f1b56261f0d0cd",
+                          "typeString": "literal_string \"path\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_5957001a2280ab7d4833e0cc4c6db3328ac11f496634babf915c68dce4a08183",
+                          "typeString": "literal_string \"payload.average.gasPrice\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 68,
+                        "name": "req",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52,
+                        "src": "957:3:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
+                          "typeString": "struct Chainlink.Request memory"
+                        }
+                      },
+                      "id": 70,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "add",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 319,
+                      "src": "957:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Request_$226_memory_ptr_$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$__$bound_to$_t_struct$_Request_$226_memory_ptr_$",
+                        "typeString": "function (struct Chainlink.Request memory,string memory,string memory) pure"
+                      }
+                    },
+                    "id": 73,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "957:43:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 74,
+                  "nodeType": "ExpressionStatement",
+                  "src": "957:43:0"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 81,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 102,
+                      "id": 75,
                       "name": "requestId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 49,
-                      "src": "1222:9:0",
+                      "referencedDeclaration": 47,
+                      "src": "1009:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
                         "typeString": "bytes32"
@@ -3259,12 +2884,12 @@
                       "arguments": [
                         {
                           "argumentTypes": null,
-                          "id": 104,
+                          "id": 77,
                           "name": "ORACLE_ADDRESS_ROPSTEN",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 31,
-                          "src": "1257:22:0",
+                          "src": "1044:22:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -3272,25 +2897,25 @@
                         },
                         {
                           "argumentTypes": null,
-                          "id": 105,
+                          "id": 78,
                           "name": "req",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 54,
-                          "src": "1281:3:0",
+                          "referencedDeclaration": 52,
+                          "src": "1068:3:0",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                            "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                             "typeString": "struct Chainlink.Request memory"
                           }
                         },
                         {
                           "argumentTypes": null,
-                          "id": 106,
+                          "id": 79,
                           "name": "ORACLE_PAYMENT",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 17,
-                          "src": "1286:14:0",
+                          "src": "1073:14:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -3304,7 +2929,7 @@
                             "typeString": "address"
                           },
                           {
-                            "typeIdentifier": "t_struct$_Request_$233_memory_ptr",
+                            "typeIdentifier": "t_struct$_Request_$226_memory_ptr",
                             "typeString": "struct Chainlink.Request memory"
                           },
                           {
@@ -3312,18 +2937,18 @@
                             "typeString": "uint256"
                           }
                         ],
-                        "id": 103,
+                        "id": 76,
                         "name": "sendChainlinkRequestTo",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 628,
-                        "src": "1234:22:0",
+                        "referencedDeclaration": 621,
+                        "src": "1021:22:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_struct$_Request_$233_memory_ptr_$_t_uint256_$returns$_t_bytes32_$",
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_struct$_Request_$226_memory_ptr_$_t_uint256_$returns$_t_bytes32_$",
                           "typeString": "function (address,struct Chainlink.Request memory,uint256) returns (bytes32)"
                         }
                       },
-                      "id": 107,
+                      "id": 80,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3331,26 +2956,26 @@
                       "lValueRequested": false,
                       "names": [],
                       "nodeType": "FunctionCall",
-                      "src": "1234:67:0",
+                      "src": "1021:67:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
                         "typeString": "bytes32"
                       }
                     },
-                    "src": "1222:79:0",
+                    "src": "1009:79:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
                     }
                   },
-                  "id": 109,
+                  "id": 82,
                   "nodeType": "ExpressionStatement",
-                  "src": "1222:79:0"
+                  "src": "1009:79:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 111,
+            "id": 84,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -3358,50 +2983,23 @@
             "name": "createRequest",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 47,
+              "id": 45,
               "nodeType": "ParameterList",
-              "parameters": [
-                {
-                  "constant": false,
-                  "id": 46,
-                  "name": "predictions",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 111,
-                  "src": "719:16:0",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_bool",
-                    "typeString": "bool"
-                  },
-                  "typeName": {
-                    "id": 45,
-                    "name": "bool",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "719:4:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_bool",
-                      "typeString": "bool"
-                    }
-                  },
-                  "value": null,
-                  "visibility": "internal"
-                }
-              ],
-              "src": "718:18:0"
+              "parameters": [],
+              "src": "718:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 50,
+              "id": 48,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 49,
+                  "id": 47,
                   "name": "requestId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 111,
-                  "src": "753:17:0",
+                  "scope": 84,
+                  "src": "737:17:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -3409,10 +3007,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 48,
+                    "id": 46,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "753:7:0",
+                    "src": "737:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -3422,36 +3020,36 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "752:19:0"
+              "src": "736:19:0"
             },
-            "scope": 154,
-            "src": "696:610:0",
+            "scope": 147,
+            "src": "696:397:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 129,
+              "id": 102,
               "nodeType": "Block",
-              "src": "1422:73:0",
+              "src": "1209:73:0",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 123,
+                    "id": 96,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 121,
+                      "id": 94,
                       "name": "currentGasPrice",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 21,
-                      "src": "1428:15:0",
+                      "src": "1215:15:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -3461,26 +3059,26 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 122,
+                      "id": 95,
                       "name": "_gasPrice",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 115,
-                      "src": "1446:9:0",
+                      "referencedDeclaration": 88,
+                      "src": "1233:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "1428:27:0",
+                    "src": "1215:27:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 124,
+                  "id": 97,
                   "nodeType": "ExpressionStatement",
-                  "src": "1428:27:0"
+                  "src": "1215:27:0"
                 },
                 {
                   "eventCall": {
@@ -3488,12 +3086,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 126,
+                        "id": 99,
                         "name": "_gasPrice",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 115,
-                        "src": "1480:9:0",
+                        "referencedDeclaration": 88,
+                        "src": "1267:9:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -3507,18 +3105,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 125,
+                      "id": 98,
                       "name": "OracleUpdated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 25,
-                      "src": "1466:13:0",
+                      "src": "1253:13:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
                       }
                     },
-                    "id": 127,
+                    "id": 100,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -3526,20 +3124,20 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1466:24:0",
+                    "src": "1253:24:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 128,
+                  "id": 101,
                   "nodeType": "EmitStatement",
-                  "src": "1461:29:0"
+                  "src": "1248:29:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 130,
+            "id": 103,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -3548,49 +3146,49 @@
                 "arguments": [
                   {
                     "argumentTypes": null,
-                    "id": 118,
+                    "id": 91,
                     "name": "_requestId",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 113,
-                    "src": "1408:10:0",
+                    "referencedDeclaration": 86,
+                    "src": "1195:10:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
                     }
                   }
                 ],
-                "id": 119,
+                "id": 92,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 117,
+                  "id": 90,
                   "name": "recordChainlinkFulfillment",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 879,
-                  "src": "1381:26:0",
+                  "referencedDeclaration": 872,
+                  "src": "1168:26:0",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$_t_bytes32_$",
                     "typeString": "modifier (bytes32)"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "1381:38:0"
+                "src": "1168:38:0"
               }
             ],
             "name": "fulfill",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 116,
+              "id": 89,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 113,
+                  "id": 86,
                   "name": "_requestId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 130,
-                  "src": "1327:18:0",
+                  "scope": 103,
+                  "src": "1114:18:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -3598,10 +3196,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 112,
+                    "id": 85,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1327:7:0",
+                    "src": "1114:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -3612,11 +3210,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 115,
+                  "id": 88,
                   "name": "_gasPrice",
                   "nodeType": "VariableDeclaration",
-                  "scope": 130,
-                  "src": "1347:17:0",
+                  "scope": 103,
+                  "src": "1134:17:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -3624,10 +3222,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 114,
+                    "id": 87,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1347:7:0",
+                    "src": "1134:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -3637,50 +3235,50 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1326:39:0"
+              "src": "1113:39:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 120,
+              "id": 93,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1422:0:0"
+              "src": "1209:0:0"
             },
-            "scope": 154,
-            "src": "1310:185:0",
+            "scope": 147,
+            "src": "1097:185:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 137,
+              "id": 110,
               "nodeType": "Block",
-              "src": "1571:33:0",
+              "src": "1358:33:0",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 135,
+                    "id": 108,
                     "name": "currentGasPrice",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
                     "referencedDeclaration": 21,
-                    "src": "1584:15:0",
+                    "src": "1371:15:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 134,
-                  "id": 136,
+                  "functionReturnParameters": 107,
+                  "id": 109,
                   "nodeType": "Return",
-                  "src": "1577:22:0"
+                  "src": "1364:22:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 138,
+            "id": 111,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -3688,23 +3286,23 @@
             "name": "getCurrentGasPrice",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 131,
+              "id": 104,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1526:2:0"
+              "src": "1313:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 134,
+              "id": 107,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 133,
+                  "id": 106,
                   "name": "_currentGasPrice",
                   "nodeType": "VariableDeclaration",
-                  "scope": 138,
-                  "src": "1549:21:0",
+                  "scope": 111,
+                  "src": "1336:21:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -3712,10 +3310,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 132,
+                    "id": 105,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1549:4:0",
+                    "src": "1336:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -3725,19 +3323,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1548:23:0"
+              "src": "1335:23:0"
             },
-            "scope": 154,
-            "src": "1499:105:0",
+            "scope": 147,
+            "src": "1286:105:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 152,
+              "id": 125,
               "nodeType": "Block",
-              "src": "1662:70:0",
+              "src": "1449:70:0",
               "statements": [
                 {
                   "expression": {
@@ -3748,14 +3346,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 148,
+                            "id": 121,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2041,
-                            "src": "1721:4:0",
+                            "referencedDeclaration": 2034,
+                            "src": "1508:4:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           }
@@ -3763,24 +3361,24 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_GasOracle_$154",
+                              "typeIdentifier": "t_contract$_GasOracle_$147",
                               "typeString": "contract GasOracle"
                             }
                           ],
-                          "id": 147,
+                          "id": 120,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "nodeType": "ElementaryTypeNameExpression",
-                          "src": "1713:7:0",
+                          "src": "1500:7:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_address_$",
                             "typeString": "type(address)"
                           },
                           "typeName": "address"
                         },
-                        "id": 149,
+                        "id": 122,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -3788,7 +3386,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "1713:13:0",
+                        "src": "1500:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -3807,12 +3405,12 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 144,
+                            "id": 117,
                             "name": "LINK_ADDRESS_ROPSTEN",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 28,
-                            "src": "1681:20:0",
+                            "src": "1468:20:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
@@ -3826,18 +3424,18 @@
                               "typeString": "address"
                             }
                           ],
-                          "id": 143,
+                          "id": 116,
                           "name": "ERC20",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 10,
-                          "src": "1675:5:0",
+                          "src": "1462:5:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_contract$_ERC20_$10_$",
                             "typeString": "type(contract ERC20)"
                           }
                         },
-                        "id": 145,
+                        "id": 118,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -3845,13 +3443,13 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "1675:27:0",
+                        "src": "1462:27:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_ERC20_$10",
                           "typeString": "contract ERC20"
                         }
                       },
-                      "id": 146,
+                      "id": 119,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3859,13 +3457,13 @@
                       "memberName": "balanceOf",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": 9,
-                      "src": "1675:37:0",
+                      "src": "1462:37:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$_t_uint256_$",
                         "typeString": "function (address) external returns (uint256)"
                       }
                     },
-                    "id": 150,
+                    "id": 123,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -3873,21 +3471,21 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1675:52:0",
+                    "src": "1462:52:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 142,
-                  "id": 151,
+                  "functionReturnParameters": 115,
+                  "id": 124,
                   "nodeType": "Return",
-                  "src": "1668:59:0"
+                  "src": "1455:59:0"
                 }
               ]
             },
             "documentation": null,
-            "id": 153,
+            "id": 126,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -3895,23 +3493,23 @@
             "name": "getLinkBalance",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 139,
+              "id": 112,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1631:2:0"
+              "src": "1418:2:0"
             },
             "payable": false,
             "returnParameters": {
-              "id": 142,
+              "id": 115,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 141,
+                  "id": 114,
                   "name": "_balance",
                   "nodeType": "VariableDeclaration",
-                  "scope": 153,
-                  "src": "1648:13:0",
+                  "scope": 126,
+                  "src": "1435:13:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -3919,10 +3517,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 140,
+                    "id": 113,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1648:4:0",
+                    "src": "1435:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -3932,20 +3530,318 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1647:15:0"
+              "src": "1434:15:0"
             },
-            "scope": 154,
-            "src": "1608:124:0",
+            "scope": 147,
+            "src": "1395:124:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 145,
+              "nodeType": "Block",
+              "src": "1569:100:0",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 143,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 141,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "arguments": [
+                              {
+                                "argumentTypes": null,
+                                "commonType": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                },
+                                "id": 137,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftExpression": {
+                                  "argumentTypes": null,
+                                  "expression": {
+                                    "argumentTypes": null,
+                                    "id": 134,
+                                    "name": "block",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 1989,
+                                    "src": "1603:5:0",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_magic_block",
+                                      "typeString": "block"
+                                    }
+                                  },
+                                  "id": 135,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "memberName": "number",
+                                  "nodeType": "MemberAccess",
+                                  "referencedDeclaration": null,
+                                  "src": "1603:12:0",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  }
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "-",
+                                "rightExpression": {
+                                  "argumentTypes": null,
+                                  "hexValue": "31",
+                                  "id": 136,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "kind": "number",
+                                  "lValueRequested": false,
+                                  "nodeType": "Literal",
+                                  "src": "1616:1:0",
+                                  "subdenomination": null,
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_1_by_1",
+                                    "typeString": "int_const 1"
+                                  },
+                                  "value": "1"
+                                },
+                                "src": "1603:14:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              ],
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 132,
+                                "name": "block",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 1989,
+                                "src": "1587:5:0",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_magic_block",
+                                  "typeString": "block"
+                                }
+                              },
+                              "id": 133,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "blockhash",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1587:15:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_blockhash_view$_t_uint256_$returns$_t_bytes32_$",
+                                "typeString": "function (uint256) view returns (bytes32)"
+                              }
+                            },
+                            "id": 138,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "1587:31:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bytes32",
+                              "typeString": "bytes32"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_bytes32",
+                              "typeString": "bytes32"
+                            }
+                          ],
+                          "id": 131,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1582:4:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_uint256_$",
+                            "typeString": "type(uint256)"
+                          },
+                          "typeName": "uint"
+                        },
+                        "id": 139,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1582:37:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "%",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "hexValue": "35",
+                        "id": 140,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1620:1:0",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_rational_5_by_1",
+                          "typeString": "int_const 5"
+                        },
+                        "value": "5"
+                      },
+                      "src": "1582:39:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "31",
+                      "id": 142,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1624:1:0",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_1_by_1",
+                        "typeString": "int_const 1"
+                      },
+                      "value": "1"
+                    },
+                    "src": "1582:43:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 130,
+                  "id": 144,
+                  "nodeType": "Return",
+                  "src": "1575:50:0"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 146,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "random",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 127,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1538:2:0"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 130,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 129,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 146,
+                  "src": "1563:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 128,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1563:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1562:6:0"
+            },
+            "scope": 147,
+            "src": "1523:146:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "private"
           }
         ],
-        "scope": 155,
-        "src": "153:1582:0"
+        "scope": 148,
+        "src": "153:1519:0"
       }
     ],
-    "src": "0:1736:0"
+    "src": "0:1673:0"
   },
   "compiler": {
     "name": "solc",
@@ -3953,7 +3849,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-12-07T21:36:24.612Z",
+  "updatedAt": "2019-12-07T22:10:53.378Z",
   "devdoc": {
     "methods": {}
   },

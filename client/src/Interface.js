@@ -9,16 +9,16 @@ if (window.ethereum) {
   web3 = new Web3(window.ethereum);
 }
 
-const GAS_ORACLE_ADDRESS = "0x4c1B48b76b39bbC2510bd24CbE93a3cE69B3Ab29"; // our contract
+const GAS_ORACLE_ADDRESS = "0x0a6701bfAEa5a3eA516976928fdc9DAfb2ED335c"; // our contract
 
 async function GasOracleContract() {
   return await new web3.eth.Contract(GasOracle.abi, GAS_ORACLE_ADDRESS);
 }
 
 // only works if contract is funded with > 1 LINK
-export async function createRequest(bool) {
+export async function createRequest() {
   const contr = await GasOracleContract();
-  await contr.methods.createRequest(bool).send({
+  await contr.methods.createRequest().send({
     from: web3.eth.accounts.givenProvider.selectedAddress
   });
 }

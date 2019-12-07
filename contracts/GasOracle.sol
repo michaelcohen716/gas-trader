@@ -25,32 +25,25 @@ contract GasOracle is ChainlinkClient {
 
   // only works if contract is funded with > 1 LINK
   /* bool == true > predictions, bool == false > percentiles */
-  function createRequest(bool predictions) public returns (bytes32 requestId) {
+  function createRequest() public returns (bytes32 requestId) {
       Chainlink.Request memory req = buildChainlinkRequest(
           jobId,
           this,
           this.fulfill.selector
       );
 
-      if(predictions){
-        req.add("extPath", "transactions/gas/predictions");
-        req.add("path", "payload.average.gasPrice");
-      } else {
-        req.add("extPath", "transactions/gas/percentiles");
-        req.add("path", "payload.percentile_060");
-      }
+      req.add("extPath", "transactions/gas/predictions");
+      req.add("path", "payload.average.gasPrice");
 
       requestId = sendChainlinkRequestTo(ORACLE_ADDRESS_ROPSTEN, req, ORACLE_PAYMENT);
   }
 
-  // chainlink call works but we use a random number generator to simulate real network conditions
   function fulfill(bytes32 _requestId, uint256 _gasPrice)
     public
     recordChainlinkFulfillment(_requestId)
   {
-    uint newPrice = _gasPrice * random() / random();
-    currentGasPrice = newPrice;
-    emit OracleUpdated(newPrice);
+    currentGasPrice = _gasPrice;
+    emit OracleUpdated(_gasPrice);
   }
 
   function getCurrentGasPrice() public view returns(uint _currentGasPrice){
@@ -62,7 +55,7 @@ contract GasOracle is ChainlinkClient {
   }
 
   function random() private view returns (uint) {
-    return uint(block.blockhash(block.number-1))%5 + 1
+    return uint(block.blockhash(block.number-1))%5 + 1;
     // returns number between 1 and 5 
   }
 
