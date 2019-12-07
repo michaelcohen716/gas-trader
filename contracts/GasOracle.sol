@@ -24,7 +24,6 @@ contract GasOracle is ChainlinkClient {
   }
 
   // only works if contract is funded with > 1 LINK
-  /* bool == true > predictions, bool == false > percentiles */
   function createRequest() public returns (bytes32 requestId) {
       Chainlink.Request memory req = buildChainlinkRequest(
           jobId,
@@ -52,11 +51,6 @@ contract GasOracle is ChainlinkClient {
 
   function getLinkBalance() view returns (uint _balance){
     return ERC20(LINK_ADDRESS_ROPSTEN).balanceOf(address(this));
-  }
-
-  function random() private view returns (uint) {
-    return uint(block.blockhash(block.number-1))%5 + 1;
-    // returns number between 1 and 5 
   }
 
 }
