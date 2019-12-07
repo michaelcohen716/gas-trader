@@ -1,22 +1,17 @@
-.App {
-  text-align: center;
+.container {
+  margin-top: 40px;
 }
 
-.App-logo {
-  height: 40vmin;
+@font-face {
+  font-family: 'Logo';
+  src: url('./assets/fonts/Alien-Encounters-Italic.ttf')
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+h1 {
+  font-family: 'Logo';
+  color: #dc5ff4;
 }
 
-.App-link {
-  color: #09d3ac;
+h1 > span {
+  color: #9d63f7;
 }
