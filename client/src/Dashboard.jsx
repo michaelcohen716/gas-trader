@@ -5,7 +5,7 @@ import PercentilesBar from './components/PercentilesBar';
 import CurrentPrice from './components/CurrentPrice';
 import Account from './components/Account';
 
-const App = () => {
+const Dashboard = () => {
     return (
         <div className="container">
             <div className="row">
@@ -26,4 +26,4 @@ const App = () => {
     )
 };
 
-export default App;
+export default Dashboard;
