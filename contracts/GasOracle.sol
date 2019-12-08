@@ -1,11 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "chainlink/contracts/ChainlinkClient.sol";
-
-interface ERC20 {
-  function balanceOf(address _address) returns(uint);
-}
-
+import "./ERC20.sol";
 
 contract GasOracle is ChainlinkClient {
   uint256 ORACLE_PAYMENT = 1 * LINK;
