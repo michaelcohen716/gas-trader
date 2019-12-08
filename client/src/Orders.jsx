@@ -1,7 +1,5 @@
 import React from "react";
-// import cybertruck from "./assets/images/cybertruck.png";
 import Card from "./components/Card";
-// import moment from 'moment';
 
 const Orders = () => {
   return (
