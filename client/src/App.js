@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import getWeb3 from "./getWeb3";
 import Interface from "./Interface";
 import UniswapInterface from "./UniswapInterface";
