@@ -16,34 +16,39 @@ const Menu = styled.ul`
     margin-left: 20px;
     font-weight: bold;
     a {
-        color: black;
+      color: black;
     }
     a.active {
-        color: #01CDFE;
+      color: #01cdfe;
     }
   }
 `;
 
 const Header = ({ match }) => {
-
   const { path } = match;
 
-  const pages = [{
-    path: "/",
-    title: "Home"
-  },{
-    path: "/charts",
-    title: "Charts"
-  },{
-    path: "/orders",
-    title: "Orders"
-  },{
-    path: "/about",
-    title: "About"
-  },{
-    path: "/profile",
-    title: "Profile"
-  }];
+  const pages = [
+    {
+      path: "/",
+      title: "Home"
+    },
+    {
+      path: "/charts",
+      title: "Charts"
+    },
+    {
+      path: "/orders",
+      title: "Orders"
+    },
+    {
+      path: "/profile",
+      title: "Profile"
+    },
+    {
+      path: "/about",
+      title: "About"
+    }
+  ];
 
   return (
     <div className="row d-flex align-items-center">
@@ -56,18 +61,20 @@ const Header = ({ match }) => {
       </div>
       <div className="col-md-6">
         <Menu>
-          {
-            pages.map(page => (
-              <li key={page.path}>
-                <Link to={page.path} className={path === page.path ? "active" : ""}>{page.title}</Link>
-              </li>
-            ))
-          }
+          {pages.map(page => (
+            <li key={page.path}>
+              <Link
+                to={page.path}
+                className={path === page.path ? "active" : ""}
+              >
+                {page.title}
+              </Link>
+            </li>
+          ))}
         </Menu>
       </div>
     </div>
   );
-
 };
 
 export default withRouter(Header);
