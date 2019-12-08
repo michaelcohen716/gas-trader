@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { AMBER_API_KEY } from '../../constants';
@@ -6,7 +6,12 @@ import Card from '../Card';
 
 const PriceHistory = () => {
 
+<<<<<<< HEAD
     const [data, setData] = useState([]);
+=======
+    const DAYS = 30;
+    const records = Array.apply(null, Array(DAYS));
+>>>>>>> buy/sell cards
 
     useEffect(() => {
 
