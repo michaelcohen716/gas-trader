@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import getWeb3 from "../../getWeb3";
 import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
-import Loading from '../Loading';
+import Loading from "../Loading";
 import { ethForToken, ExchangeContractEthers } from "../../UniswapInterface";
 
 const Account = ({ price }) => {
@@ -15,16 +15,15 @@ const Account = ({ price }) => {
   const [selling, setSelling] = useState(false);
   const [transacting, setTransacting] = useState(false);
 
-  const buy = async() => {
+  const buy = async () => {
     setBuying(true);
     const contr = await ExchangeContractEthers();
     contr.on("TokenPurchase", () => {
-        setBuying(false);
-        console.log('set transacting false')
+      setBuying(false);
+      console.log("set transacting false");
     });
 
     await ethForToken(buyAmount);
-
   };
 
   const sell = () => {
@@ -57,16 +56,17 @@ const Account = ({ price }) => {
               placeholder="ETH Amount"
               onChange={ev => setBuyAmount(ev.target.value)}
             />
-            {
-              buying ? (
-                <Loading type="bar" text="Buying..." />
-              ) : (
-                <React.Fragment>
-                  <p><strong>Total GasSynth:</strong> {parseFloat(buyAmount * price, 2)}</p>
-                  <Button onClick={buy}>Buy</Button>
-                </React.Fragment>
-              )
-            }
+            {buying ? (
+              <Loading type="bar" text="Buying..." />
+            ) : (
+              <React.Fragment>
+                <p>
+                  <strong>Total GasSynth:</strong>{" "}
+                  {parseFloat(buyAmount * price, 2)}
+                </p>
+                <Button onClick={buy}>Buy</Button>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </Card>
@@ -79,16 +79,17 @@ const Account = ({ price }) => {
               placeholder="GasSynth Amount"
               onChange={ev => setSellAmount(ev.target.value)}
             />
-            {
-              selling ? (
-                <Loading type="bar" text="Selling..." />
-              ) : (
-                <React.Fragment>
-                  <p><strong>Total ETH:</strong> {parseFloat(sellAmount / price, 2)}</p>
-                  <Button onClick={sell}>Sell</Button>
-                </React.Fragment>
-              )
-            }
+            {selling ? (
+              <Loading type="bar" text="Selling..." />
+            ) : (
+              <React.Fragment>
+                <p>
+                  <strong>Total ETH:</strong>{" "}
+                  {parseFloat(sellAmount / price, 2)}
+                </p>
+                <Button onClick={sell}>Sell</Button>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </Card>
@@ -98,7 +99,6 @@ const Account = ({ price }) => {
           <small>{account}</small>
         </div>
       </div>
-
     </React.Fragment>
   ) : (
     <Card title="Hi Stranger">
@@ -109,8 +109,7 @@ const Account = ({ price }) => {
         </div>
       </div>
     </Card>
-  )
-
+  );
 };
 
 export default Account;

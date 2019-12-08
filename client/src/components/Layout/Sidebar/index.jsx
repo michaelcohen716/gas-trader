@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import CurrentPrice from "../../CurrentPrice";
 import Account from "../../Account";
-import axios from 'axios';
-import { AMBER_API_KEY } from '../../../constants';
+import GasPrediction from "../../GasPrediction";
+import axios from "axios";
+import { AMBER_API_KEY } from "../../../constants";
 
 const Sidebar = () => {
-
   const [price, setPrice] = useState(0);
 
   useEffect(() => {
@@ -21,18 +21,17 @@ const Sidebar = () => {
         console.error(err);
       }
     }
-    
-    getPrice();
 
+    getPrice();
   });
 
   return (
     <div className="col-md-4">
       <CurrentPrice price={price} />
       <Account price={price} />
+      <GasPrediction />
     </div>
   );
-
-}
+};
 
 export default Sidebar;
