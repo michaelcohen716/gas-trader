@@ -65,7 +65,7 @@ const Account = ({ price }) => {
             />
             {
               buying ? (
-                <Loading type="bar" text="Loading..." />
+                <Loading type="bar" text="Buying..." />
               ) : (
                 <React.Fragment>
                   <p><strong>Total GasSynth:</strong> {parseFloat(buyAmount * price, 2)}</p>
@@ -87,7 +87,7 @@ const Account = ({ price }) => {
             />
             {
               selling ? (
-                <Loading type="bar" text="Loading..." />
+                <Loading type="bar" text="Selling..." />
               ) : (
                 <React.Fragment>
                   <p><strong>Total ETH:</strong> {parseFloat(sellAmount / price, 2)}</p>
