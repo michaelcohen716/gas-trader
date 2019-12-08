@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
+import styled from 'styled-components';
 import getWeb3 from "../../getWeb3";
 import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
 
+
+const InlineButton = styled(Button)`
+    display: inline-block;
+    width: 49%;
+`;
+
 const Account = ({ price }) => {
   const [account, setAccount] = useState(null);
   const [amount, setAmount] = useState("");
+  // const [transacting, setTransacting] = useState(null);
 
   async function getAccount() {
     try {
@@ -21,9 +29,15 @@ const Account = ({ price }) => {
     }
   }
 
-  const startTransaction = () => {
+
+  const buy = () => {
     console.log(amount);
-    alert("Start it.");
+    alert("Buy");
+  };
+
+  const sell = () => {
+    console.log(amount);
+    alert("Sell");
   };
 
   useEffect(() => {
@@ -32,7 +46,7 @@ const Account = ({ price }) => {
   }, []);
 
   return (
-    <Card title={account ? "Mint Tokens" : "Hi Stranger"}>
+    <Card title={account ? "Tokens" : "Hi Stranger"}>
       {account ? (
         <div className="row">
           <div className="col-md-12 text-center">
@@ -42,7 +56,8 @@ const Account = ({ price }) => {
               onChange={ev => setAmount(ev.target.value)}
             />
             <strong>Total:</strong> {parseFloat(amount * price, 2)}
-            <Button onClick={startTransaction}>Start Transaction</Button>
+            <InlineButton onClick={buy}>Buy</InlineButton>
+            <InlineButton onClick={sell}>Sell</InlineButton>
           </div>
         </div>
       ) : (

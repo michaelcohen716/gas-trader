@@ -12,9 +12,7 @@ const StyledInput = styled.input`
 `;
 
 const InputField = ({ value, placeholder, onChange }) => {
-  return (
-    <StyledInput value={value} placeholder={placeholder} onChange={onChange} />
-  );
+    return (<StyledInput value={value} placeholder={placeholder} onChange={onChange} />);
 };
 
 export default InputField;

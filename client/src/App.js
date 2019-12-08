@@ -3,12 +3,20 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import getWeb3 from "./getWeb3";
 import Interface from "./Interface";
 import UniswapInterface from "./UniswapInterface";
+import styled from 'styled-components';
+import { BrowserRouter } from 'react-router-dom';
+// import getWeb3 from "./getWeb3";
+// import Interface from "./Interface";
 import "./App.css";
 // import { drizzleReactHooks } from 'drizzle-react';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
-import Dashboard from './Dashboard';
-import Orders from './Orders';
+import Pages from './Pages';
+import globe from './assets/images/globe.gif';
+
+const GlobeImg = styled.img`
+margin: 0px auto;
+`;
 
 class App extends Component {
   // state = { storageValue: 0, web3: null, accounts: null, contract: null };
@@ -63,15 +71,17 @@ class App extends Component {
         <BrowserRouter>
           <Header />
           <div className="row">
+            <div className="col-md-12">
+              <hr />
+            </div>
             <div className="col-md-8">
-              <Switch>
-                <Route exact path="/" component={Dashboard} />
-                <Route exact path="/orders" component={Orders} />} />
-              </Switch>
+              <Pages />
             </div>
             <Sidebar />
           </div>
-          
+          <div className="row text-center">
+            <GlobeImg src={globe}/>
+          </div>
         </BrowserRouter>
       </div>
     );
