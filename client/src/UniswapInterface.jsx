@@ -1,5 +1,6 @@
 import React from "react";
 import Web3 from "web3";
+import { ethers } from "ethers"; // using ethers for event listening
 import UniswapExchange from "./abi/UniswapExchange.json";
 
 let web3;
@@ -10,6 +11,14 @@ if (window.ethereum) {
 
 const PLACEHOLDER_EXCHANGE_ADDRESS =
   "0xc4659c4DD66d1175D8b3C53b195911AD493Bb2eB"; // replace this
+
+async function getPastEvents(){
+    const exchContr = await ExchangeContract();
+    const allLogs = await exchContr.getPastEvents({ fromBlock: 0, toBlock: "latest" })
+    console.log('all logs', allLogs)
+}
+
+getPastEvents()
 
 async function ExchangeContract() {
   return await new web3.eth.Contract(
@@ -42,6 +51,14 @@ export async function tokenForEth(tokens) {
     .send({
       from: web3.eth.accounts.givenProvider.selectedAddress
     });
+}
+
+export async function ExchangeContractEthers() {
+    console.log('ethers', ethers)
+    let provider = ethers.providers.getDefaultProvider('ropsten');
+    console.log('provider', provider)
+    let contract = new ethers.Contract(PLACEHOLDER_EXCHANGE_ADDRESS, UniswapExchange, provider);
+    return contract;
 }
 
 function UniswapInterface() {
