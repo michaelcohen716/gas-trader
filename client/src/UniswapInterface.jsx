@@ -12,10 +12,11 @@ if (window.ethereum) {
 const PLACEHOLDER_EXCHANGE_ADDRESS =
   "0xc4659c4DD66d1175D8b3C53b195911AD493Bb2eB"; // replace this
 
-async function getPastEvents(){
+export async function getPastEvents(){
     const exchContr = await ExchangeContract();
-    const allLogs = await exchContr.getPastEvents({ fromBlock: 0, toBlock: "latest" })
+    const allLogs = await exchContr.getPastEvents({ fromBlock: 0, toBlock: "latest" });
     console.log('all logs', allLogs)
+    return allLogs;
 }
 
 // getPastEvents()

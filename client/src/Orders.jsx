@@ -1,42 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import styled from 'styled-components';
 import Card from "./components/Card";
+import { getPastEvents } from "./UniswapInterface";
+
+const TableRow = styled.tr`
+  td {
+    font-size: 12px;
+  }
+`;
 
 const Orders = () => {
+
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+
+    async function getEvents() {
+
+      try {
+        const response = await getPastEvents();
+        setEvents(response);
+      } catch(err) {
+        console.error(err);
+      }
+
+    }
+
+    getEvents();
+    
+  }, []);
+
   return (
     <React.Fragment>
       <Card title="Latest Orders">
         <table className="table">
           <thead>
             <tr>
-              <th scope="col">#</th>
               <th scope="col">Address</th>
+              <th scope="col">Event</th>
+              <th scope="col">ETH</th>
               <th scope="col">Tokens</th>
-              <th scope="col">Price</th>
-              <th scope="col">Amount</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>....</td>
-              <td>12</td>
-              <td>$12.13</td>
-              <td>$144.50</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>....</td>
-              <td>9</td>
-              <td>$12.13</td>
-              <td>$144.50</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>....</td>
-              <td>6</td>
-              <td>$12.13</td>
-              <td>$144.50</td>
-            </tr>
+            {
+              events.filter(ev => ev.event === "EthPurchase" || ev.event === "TokenPurchase").map(ev => (
+                <TableRow key={ev.id}>
+                  <td>{ev.address}</td>
+                  <td>{ev.event}</td>
+                  <td>{parseFloat((ev.returnValues.eth_bought || (ev.returnValues.eth_sold) / 10000000000000)).toFixed(2)}</td>
+                  <td>{parseFloat((ev.returnValues.tokens_sold || ev.returnValues.tokens_bought) / 10000000000000).toFixed(2)}</td>
+                </TableRow>
+              ))
+            }
           </tbody>
         </table>
       </Card>

@@ -13,7 +13,6 @@ const Account = ({ price }) => {
   const [sellAmount, setSellAmount] = useState("");
   const [buying, setBuying] = useState(false);
   const [selling, setSelling] = useState(false);
-  const [transacting, setTransacting] = useState(false);
 
   const buy = async () => {
     setBuying(true);
