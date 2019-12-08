@@ -18,7 +18,7 @@ async function getPastEvents(){
     console.log('all logs', allLogs)
 }
 
-getPastEvents()
+// getPastEvents()
 
 async function ExchangeContract() {
   return await new web3.eth.Contract(
@@ -54,9 +54,7 @@ export async function tokenForEth(tokens) {
 }
 
 export async function ExchangeContractEthers() {
-    console.log('ethers', ethers)
     let provider = ethers.providers.getDefaultProvider('ropsten');
-    console.log('provider', provider)
     let contract = new ethers.Contract(PLACEHOLDER_EXCHANGE_ADDRESS, UniswapExchange, provider);
     return contract;
 }
