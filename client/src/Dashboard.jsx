@@ -3,6 +3,17 @@ import PercentilesBar from "./components/PercentilesBar";
 import Card from "./components/Card";
 import { AMBER_API_KEY } from "./constants";
 import axios from "axios";
+import Loading from './components/Loading';
+
+const StatCard = ({ title, stat }) => (
+  <Card title={title}>
+    <div className="text-center">
+      {
+        stat ? `${stat}%` : (<Loading />)
+      }
+    </div>
+  </Card>
+);
 
 const Dashboard = () => {
   const [stats, setStats] = useState({});
@@ -30,25 +41,13 @@ const Dashboard = () => {
     <React.Fragment>
       <div className="row">
         <div className="col-md-4">
-          <Card title="Hourly % Change">
-            <div className="text-center">
-              {stats.hourlyPercentChangeETH || 0}%
-            </div>
-          </Card>
+          <StatCard title="Hourly % Change" stat={stats.hourlyPercentChangeETH} />
         </div>
         <div className="col-md-4">
-          <Card title="Daily % Change">
-            <div className="text-center">
-              {stats.dailyPercentChangeETH || 0}%
-            </div>
-          </Card>
+          <StatCard title="Daily % Change" stat={stats.dailyPercentChangeETH} />
         </div>
         <div className="col-md-4">
-          <Card title="Weekly % Change">
-            <div className="text-center">
-              {stats.weeklyPercentChangeETH || 0}%
-            </div>
-          </Card>
+          <StatCard title="Weekly % Change" stat={stats.weeklyPercentChangeETH} />
         </div>
         <div className="col-md-12">
           <PercentilesBar />

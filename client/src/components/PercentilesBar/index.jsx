@@ -13,7 +13,6 @@ const PercentilesBar = () => {
         async function getPercentiles() {
 
             try {
-                // const web3 = await getWeb3();
                 const result = await axios.get(`https://web3api.io/api/v2/transactions/gas/percentiles`, { headers: { 'x-api-key': AMBER_API_KEY }});
                 const percentiles = result.data.payload;
                 console.log(percentiles);
