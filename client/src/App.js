@@ -60,7 +60,6 @@ class App extends Component {
     // }
     return (
       <div className="container">
-        <UniswapInterface />
         <BrowserRouter>
           <Header />
           <div className="row">
