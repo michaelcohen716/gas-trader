@@ -7,7 +7,6 @@ const Home = () => {
   return (
     <div className="row">
       <div className="col-md-12">
-        <UniswapInterface />
         <Card title="Welcome to VaporTrader">
           <h4>What is VaporTrader?</h4>
           <p>VaporTrader is a platform for managing network congestion risk on Ethereum. 
