@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const StyledInput = styled.input`
     background: #f3eee8;
@@ -12,7 +12,9 @@ const StyledInput = styled.input`
 `;
 
 const InputField = ({ value, placeholder, onChange }) => {
-    return (<StyledInput value={value} placeholder={placeholder} onChange={onChange} />)
+  return (
+    <StyledInput value={value} placeholder={placeholder} onChange={onChange} />
+  );
 };
 
 export default InputField;

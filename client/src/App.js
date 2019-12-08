@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import getWeb3 from "./getWeb3";
 import Interface from "./Interface";
+import UniswapInterface from "./UniswapInterface";
 import "./App.css";
 // import { drizzleReactHooks } from 'drizzle-react';
 import Header from './components/Layout/Header';
@@ -59,6 +60,7 @@ class App extends Component {
     // }
     return (
       <div className="container">
+        <UniswapInterface />
         <BrowserRouter>
           <Header />
           <div className="row">
