@@ -5,6 +5,17 @@ import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
 import GasPrediction from "../GasPrediction";
+import ETHPrice from "../ETHPrice";
+
+import { NumberField, Cutout } from "react95";
+
+const StyledCutout = styled(Cutout)`
+  background: ${({ theme }) => theme.canvas};
+`;
+const Wrapper = styled.div`
+  background: ${({ theme }) => theme.material};
+  padding: 5rem;
+`;
 
 const InlineButton = styled(Button)`
   display: inline-block;
@@ -55,6 +66,7 @@ const Account = ({ price }) => {
               onChange={ev => setAmount(ev.target.value)}
             />
             <strong>Total:</strong> {parseFloat(amount * price, 2)}
+            <ETHPrice />
             <InlineButton onClick={buy}>Buy</InlineButton>
             <InlineButton onClick={sell}>Sell</InlineButton>
             <hr />
