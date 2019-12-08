@@ -41,11 +41,11 @@ const LoadingBar = styled.div`
 
 const Loading = ({ type, text, imgWidth }) =>
   type === "spinner" ? (
-    <LoadingImg src={cybertruck} imgWidth={imgWidth} />
+    <LoadingImg src={cybertruck} alt="Loading..." imgWidth={imgWidth} />
   ) : (
     <LoadingBar imgWidth={imgWidth}>
       {text}
-      <img src={cybertruck} />
+      <img src={cybertruck} alt="Loading..." />
     </LoadingBar>
   );
 

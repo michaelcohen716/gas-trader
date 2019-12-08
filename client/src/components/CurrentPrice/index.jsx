@@ -7,13 +7,16 @@ const Price = styled.h2`
   font-size: 56px;
   margin-bottom: 0px;
   font-family: Courier, monospace;
+  span {
+    font-size: 18px;
+  }
 `;
 
 const CurrentPrice = ({ price }) => (
   <Card title="Current Price">
     <div className="row">
       <div className="col-md-12 text-center">
-        <Price>{price}</Price>
+        <Price>{price}<span>gwei</span></Price>
       </div>
     </div>
   </Card>
