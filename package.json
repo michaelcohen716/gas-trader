@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "chainlink": "^0.7.9",
+    "ethers": "^4.0.40",
     "truffle": "^5.1.3",
     "truffle-hdwallet-provider": "^1.0.17"
   }

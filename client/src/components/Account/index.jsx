@@ -5,7 +5,7 @@ import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
 import Loading from '../Loading';
-
+import { ethForToken, ExchangeContractEthers } from "../../UniswapInterface";
 
 const InlineButton = styled(Button)`
     display: inline-block;
@@ -15,11 +15,32 @@ const InlineButton = styled(Button)`
 const Account = ({ price }) => {
   const [account, setAccount] = useState(null);
   const [amount, setAmount] = useState("");
-  // const [transacting, setTransacting] = useState(null);
+  const [transacting, setTransacting] = useState(false);
 
-  const buy = () => {
-    console.log(amount);
-    alert("Buy");
+  async function getAccount() {
+    try {
+      console.log("get account");
+      const web3 = await getWeb3();
+      console.log(web3);
+      const accounts = await web3.eth.getAccounts();
+      console.log(accounts);
+      setAccount(accounts[0]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+  const buy = async() => {
+    setTransacting(true);
+    const contr = await ExchangeContractEthers();
+    contr.on("TokenPurchase", () => {
+        setTransacting(false);
+        console.log('set transacting false')
+    })
+
+    await ethForToken(amount);
+
   };
 
   const sell = () => {
