@@ -33,8 +33,9 @@ contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed, GasOr
         return calculateCR(address(this).balance, totalSupply());
     }
 
-    /*
     function _mint(address account, uint256 amount) internal {
+        require(amount > 0);
+
         require(
             calculateCR(address(this).balance, totalSupply() + amount) >= goalCR,
             'Insufficient collateral to mint tokens.'
@@ -42,7 +43,6 @@ contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed, GasOr
 
         return super._mint(account, amount);
     }
-    */
 
     // Take a transaction fee to reward the collateral provider
     function transfer(address recipient, uint256 amount) public returns (bool) {
