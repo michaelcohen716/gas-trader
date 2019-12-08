@@ -24,10 +24,10 @@ const Menu = styled.ul`
   }
 `;
 
-const Header = ({ match }) => {
+const Header = () => {
 
-  const { path } = match;
-
+  const { pathname } = window.location;
+  
   const pages = [{
     path: "/",
     title: "Home"
@@ -59,7 +59,7 @@ const Header = ({ match }) => {
           {
             pages.map(page => (
               <li key={page.path}>
-                <Link to={page.path} className={path === page.path ? "active" : ""}>{page.title}</Link>
+                <Link to={page.path} className={pathname === page.path ? "active" : ""}>{page.title}</Link>
               </li>
             ))
           }
