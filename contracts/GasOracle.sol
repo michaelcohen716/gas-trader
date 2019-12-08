@@ -1,13 +1,16 @@
 pragma solidity ^0.4.24;
 
+import "./SafeMath.sol";
 import "chainlink/contracts/ChainlinkClient.sol";
 import "./ERC20.sol";
 
 contract GasOracle is ChainlinkClient {
+  using SafeMath for uint256;
+
   uint256 ORACLE_PAYMENT = 1 * LINK;
   bytes32 jobId;
 
-  uint currentGasPrice;
+  uint256 public currentPrice;
 
   event OracleUpdated(uint newPrice);
 
@@ -37,12 +40,12 @@ contract GasOracle is ChainlinkClient {
     public
     recordChainlinkFulfillment(_requestId)
   {
-    currentGasPrice = _gasPrice;
+    currentPrice = _gasPrice;
     emit OracleUpdated(_gasPrice);
   }
 
-  function getCurrentGasPrice() public view returns(uint _currentGasPrice){
-    return currentGasPrice;
+  function getCurrentGasPrice() public view returns(uint _currentPrice){
+    return currentPrice;
   }
 
   function getLinkBalance() view returns (uint _balance){

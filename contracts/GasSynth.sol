@@ -7,43 +7,42 @@ import "./ERC20Burnable.sol";
 import "./ERC20Detailed.sol";
 import "./GasOracle.sol";
 
-contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed {
+contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed, GasOracle {
     using SafeMath for uint256;
 
-    uint256 goalCR = 150;
-    uint256 txFee = 3; // 0.3%
-    uint256 currentPrice;
+    uint256 public goalCR = 150;
+    uint256 public txFee = 3; // 0.3%
 
-    GasOracle gasOracle;
-
-    constructor (address _gasOracle)
+    constructor (bytes32 _jobId)
         public
         ERC20Detailed('GasSynth', 'GSYN', 18)
-    {
-        gasOracle = GasOracle(_gasOracle);
-    }
+        GasOracle(_jobId)
+    {}
 
     function calculateCR(uint256 balance, uint256 totalSupply)
         public
         view
         returns (uint256)
     {
-        uint256 pricePerTKNBit = currentPrice / (10 ** decimals());
+        uint256 pricePerTKNBit = currentPrice / (10 ** uint256(decimals()));
         return (balance * 100) / (totalSupply * pricePerTKNBit);
     }
+
 
     function currentCR() public view returns (uint256) {
         return calculateCR(address(this).balance, totalSupply());
     }
 
-    function mint(uint256 amount) public onlyMinter {
+    /*
+    function _mint(address account, uint256 amount) internal {
         require(
             calculateCR(address(this).balance, totalSupply() + amount) >= goalCR,
             'Insufficient collateral to mint tokens.'
-        )
+        );
 
-        super.mint(owner(), amount);
+        return super._mint(account, amount);
     }
+    */
 
     // Take a transaction fee to reward the collateral provider
     function transfer(address recipient, uint256 amount) public returns (bool) {
@@ -62,7 +61,7 @@ contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed {
     }
 
     function redeem(uint256 amount) public {
-        uint256 redeemedValue = amount * (currentPrice / (10 ** decimals()));
+        uint256 redeemedValue = amount * (currentPrice / (10 ** uint256(decimals())));
 
         require(
             redeemedValue <= address(this).balance,
@@ -74,7 +73,7 @@ contract GasSynth is Ownable, ERC20Mintable, ERC20Burnable, ERC20Detailed {
     }
 
     function update() public {
-        currentPrice = gasOracle.getCurrentGasPrice();
+        createRequest();
     }
 
     function withdraw(uint256 amount) external onlyOwner {
