@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import getWeb3 from "../../getWeb3";
 import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
-
+import GasPrediction from "../GasPrediction";
 
 const InlineButton = styled(Button)`
-    display: inline-block;
-    width: 49%;
+  display: inline-block;
+  width: 49%;
 `;
 
 const Account = ({ price }) => {
@@ -28,7 +28,6 @@ const Account = ({ price }) => {
       console.error(err);
     }
   }
-
 
   const buy = () => {
     console.log(amount);
@@ -58,6 +57,8 @@ const Account = ({ price }) => {
             <strong>Total:</strong> {parseFloat(amount * price, 2)}
             <InlineButton onClick={buy}>Buy</InlineButton>
             <InlineButton onClick={sell}>Sell</InlineButton>
+            <hr />
+            <GasPrediction />
           </div>
         </div>
       ) : (
