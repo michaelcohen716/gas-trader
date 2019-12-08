@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import Card from '../Card';
 
-const Price = styled.h1`
+const Price = styled.h2`
 font-size: 56px;
 margin-bottom: 0px;
+font-family: Courier, monospace;
 `;
 
 const CurrentPrice = ({ price }) => (
