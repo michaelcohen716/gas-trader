@@ -3,8 +3,12 @@ import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { AMBER_API_KEY } from '../../constants';
 import Card from '../Card';
+import moment from 'moment';
 
 const PriceHistory = () => {
+
+    const DAYS = 30;
+    const records = Array.apply(null, Array(DAYS));
 
     const [data, setData] = useState([]);
 
@@ -16,7 +20,6 @@ const PriceHistory = () => {
                 const result = await axios.get(`https://web3api.io/api/v2/transactions/gas/percentiles`, { headers: { 'x-api-key': AMBER_API_KEY }});
                 const prices = result.data.payload;
                 console.log(prices);
-                // setData(Object.keys(percentiles).map(p => percentiles[p] / 1000000));
             } catch(err) {
                 console.error(err);
             }
@@ -28,13 +31,36 @@ const PriceHistory = () => {
     }, []);
 
     return (
-        <Card title="Price History">
+        <Card title="30-Day Price History">
             <Line data={{
-                labels: [],
+                labels: records.map((val, idx) => moment().subtract(idx, 'day').format('MM/DD')).reverse(),
                 datasets: [{
-                    data,
-                    backgroundColor: data.map(d => '#01CDFE')
+                    data: records.map(i => Math.floor(Math.random() * 4) + 8),
+                    backgroundColor: records.map(d => '#01CDFE'),
+                    fill: false,
+                    labels: {
+                        fontFamily: '"Courier", monospace'
+                    }
                 }]
+            }}
+            options={{
+                legend: {
+                    display: false,
+                    labels: {
+                        fontFamily: 'Courier',
+                        fontColor: 'green'
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        display: true,
+                        ticks: {
+                            beginAtZero: true,
+                            max: 14,
+                            min: 0
+                        }
+                    }]
+                },
             }} />
         </Card>
     )

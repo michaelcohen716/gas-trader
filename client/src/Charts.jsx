@@ -27,8 +27,6 @@ const Charts = () => {
           { headers: { "x-api-key": AMBER_API_KEY } }
         );
         const data = result.data.payload;
-        console.log("Data:");
-        console.log(data);
         setStats(data[0]);
       } catch (err) {
         console.error(err);
