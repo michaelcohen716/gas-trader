@@ -6,6 +6,7 @@ import Button from "../Button";
 import InputField from "../InputField";
 import Loading from '../Loading';
 
+
 const InlineButton = styled(Button)`
     display: inline-block;
     width: 49%;

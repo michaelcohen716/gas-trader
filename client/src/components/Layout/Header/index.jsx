@@ -16,10 +16,10 @@ const Menu = styled.ul`
     margin-left: 20px;
     font-weight: bold;
     a {
-        color: black;
+      color: black;
     }
     a.active {
-        color: #01CDFE;
+      color: #01cdfe;
     }
   }
 `;

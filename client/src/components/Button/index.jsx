@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const StyledButton = styled.button`
     background: lightgrey;
@@ -14,7 +14,7 @@ const Button = ({ children, onClick, disabled }) => (
 )
 
 Button.defaultProps = {
-    onClick: () => alert('Clicked.')
+  onClick: () => alert("Clicked.")
 };
 
 export default Button;
