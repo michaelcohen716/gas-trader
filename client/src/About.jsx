@@ -1,10 +1,7 @@
 import React from "react";
 import Card from "./components/Card";
 
-import styled from "styled-components";
-import AboutTabs from "./components/AboutTabs";
-
-const Orders = () => {
+const About = () => {
   return (
     <React.Fragment>
       <Card title="About">
@@ -30,4 +27,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default About;
