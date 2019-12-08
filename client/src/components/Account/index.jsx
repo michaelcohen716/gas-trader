@@ -6,12 +6,6 @@ import Button from "../Button";
 import InputField from "../InputField";
 import Loading from '../Loading';
 import { ethForToken, ExchangeContractEthers } from "../../UniswapInterface";
-import Loading from '../Loading';
-
-const InlineButton = styled(Button)`
-    display: inline-block;
-    width: 49%;
-`;
 
 const Account = ({ price }) => {
   const [account, setAccount] = useState(null);
