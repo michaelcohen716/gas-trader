@@ -2,8 +2,6 @@
 
 Originally developed during **GothamDLT Hackathon - New York - December 2019**
 
-![Sample Screenshot](https://github.com/michaelcohen716/gas-trader/blob/master/client/src/assets/images/Sample.png "Sample Screenshot")
-
 ## What is VaporTrader?
 
 VaporTrader is a platform for managing network congestion risk on Ethereum. Traders can hedge their exposure or speculate on gas price via our easy interface.
