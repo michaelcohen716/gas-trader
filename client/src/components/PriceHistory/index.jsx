@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { AMBER_API_KEY } from '../../constants';
 import Card from '../Card';
 
-const PriceChart = ({ }) => {
+const PriceHistory = () => {
 
     const [data, setData] = useState([]);
 
@@ -42,4 +42,4 @@ const PriceChart = ({ }) => {
 
 };
 
-export default PriceChart;
+export default PriceHistory;

@@ -4,6 +4,7 @@ import Card from "./components/Card";
 import { AMBER_API_KEY } from "./constants";
 import axios from "axios";
 import Loading from './components/Loading';
+import PriceHistory from "./components/PriceHistory";
 
 const StatCard = ({ title, stat }) => (
   <Card title={title}>
@@ -15,7 +16,7 @@ const StatCard = ({ title, stat }) => (
   </Card>
 );
 
-const Dashboard = () => {
+const Charts = () => {
   const [stats, setStats] = useState({});
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const Dashboard = () => {
           <StatCard title="Weekly % Change" stat={stats.weeklyPercentChangeETH} />
         </div>
         <div className="col-md-12">
+          <PriceHistory />
           <PercentilesBar />
         </div>
       </div>
@@ -57,4 +59,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Charts;
