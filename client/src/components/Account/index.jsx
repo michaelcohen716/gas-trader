@@ -5,6 +5,7 @@ import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
 
+
 const InlineButton = styled(Button)`
     display: inline-block;
     width: 49%;
@@ -27,6 +28,7 @@ const Account = ({ price }) => {
       console.error(err);
     }
   }
+
 
   const buy = () => {
     console.log(amount);
