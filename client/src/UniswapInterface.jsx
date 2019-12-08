@@ -2,6 +2,7 @@ import React from "react";
 import Web3 from "web3";
 import { ethers } from "ethers"; // using ethers for event listening
 import UniswapExchange from "./abi/UniswapExchange.json";
+import UniswapFactory from "./abi/UniswapFactory.json";
 
 let web3;
 
@@ -9,22 +10,25 @@ if (window.ethereum) {
   web3 = new Web3(window.ethereum);
 }
 
-const PLACEHOLDER_EXCHANGE_ADDRESS =
-  "0xc4659c4DD66d1175D8b3C53b195911AD493Bb2eB"; // replace this
 
-async function getPastEvents(){
-    const exchContr = await ExchangeContract();
-    const allLogs = await exchContr.getPastEvents({ fromBlock: 0, toBlock: "latest" })
-    console.log('all logs', allLogs)
+// ropsten addresses
+const UNISWAP_FACTORY_ADDRESS = "0x9c83dCE8CA20E9aAF9D3efc003b2ea62aBC08351";
+const UNISWAP_EXCHANGE_ADDRESS = "0xc4659c4DD66d1175D8b3C53b195911AD493Bb2eB";
+const TOKEN_ADDRESS = "0x701a74998C0091ec2C8278Ca223Ce3760DE0747e";
+
+async function getPastEvents() {
+  const exchContr = await ExchangeContract();
+  const allLogs = await exchContr.getPastEvents({
+    fromBlock: 0,
+    toBlock: "latest"
+  });
+  console.log("all logs", allLogs);
 }
 
 // getPastEvents()
 
 async function ExchangeContract() {
-  return await new web3.eth.Contract(
-    UniswapExchange,
-    PLACEHOLDER_EXCHANGE_ADDRESS
-  );
+  return await new web3.eth.Contract(UniswapExchange, UNISWAP_EXCHANGE_ADDRESS);
 }
 
 const DEADLINE_FROM_NOW = 60 * 15; // 15 min...uniswap takes a deadline param
@@ -54,16 +58,47 @@ export async function tokenForEth(tokens) {
 }
 
 export async function ExchangeContractEthers() {
-    let provider = ethers.providers.getDefaultProvider('ropsten');
-    let contract = new ethers.Contract(PLACEHOLDER_EXCHANGE_ADDRESS, UniswapExchange, provider);
-    return contract;
+  let provider = ethers.providers.getDefaultProvider("ropsten");
+  let contract = new ethers.Contract(
+    UNISWAP_EXCHANGE_ADDRESS,
+    UniswapExchange,
+    provider
+  );
+  return contract;
 }
+
+async function FactoryContract() {
+  return await new web3.eth.Contract(UniswapFactory, UNISWAP_FACTORY_ADDRESS);
+}
+
+export async function createTokenExchange() {
+  const contr = await FactoryContract();
+  await contr.methods.createExchange(TOKEN_ADDRESS).send({
+    from: web3.eth.accounts.givenProvider.selectedAddress
+  })
+}
+
+export async function addLiquidity() {
+  const contr = await ExchangeContract();
+
+  // ADD LIQUIDITY
+  const DEADLINE_FROM_NOW = 60 * 15;
+  const deadline = Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW;
+
+  await contr.methods.addLiquidity(1, 0.00000000000000001, deadline).send({
+    from: web3.eth.accounts.givenProvider.selectedAddress,
+    value: web3.utils.toWei("1", "ether")
+  })
+}
+
 
 function UniswapInterface() {
   return (
     <div>
       <button onClick={() => ethForToken(0.1)}>Exchange ETH for token</button>
       <button onClick={() => tokenForEth(3)}>Exchange Token for ETH</button>
+      <button onClick={() => createTokenExchange()}>Create token exchange</button>
+      <button onClick={() => addLiquidity()}>Add liquidity</button>
     </div>
   );
 }
