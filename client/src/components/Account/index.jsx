@@ -1,99 +1,114 @@
 import React, { useState, useEffect } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import getWeb3 from "../../getWeb3";
 import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
-import Loading from '../Loading';
+import Loading from "../Loading";
 import { ethForToken, ExchangeContractEthers } from "../../UniswapInterface";
-
-const InlineButton = styled(Button)`
-    display: inline-block;
-    width: 49%;
-`;
 
 const Account = ({ price }) => {
   const [account, setAccount] = useState(null);
-  const [amount, setAmount] = useState("");
-  const [transacting, setTransacting] = useState(false);
+  const [buyAmount, setBuyAmount] = useState("");
+  const [sellAmount, setSellAmount] = useState("");
+  const [buying, setBuying] = useState(false);
+  const [selling, setSelling] = useState(false);
 
-  async function getAccount() {
-    try {
-      console.log("get account");
-      const web3 = await getWeb3();
-      console.log(web3);
-      const accounts = await web3.eth.getAccounts();
-      console.log(accounts);
-      setAccount(accounts[0]);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-
-  const buy = async() => {
-    setTransacting(true);
+  const buy = async () => {
+    setBuying(true);
     const contr = await ExchangeContractEthers();
     contr.on("TokenPurchase", () => {
-        setTransacting(false);
-        console.log('set transacting false')
-    })
+      setBuying(false);
+      console.log("set transacting false");
+    });
 
-    await ethForToken(amount);
-
+    await ethForToken(buyAmount);
   };
 
   const sell = () => {
-    console.log(amount);
+    console.log(sellAmount);
+    setSelling(true);
     alert("Sell");
+    setSelling(false);
   };
 
   useEffect(() => {
     async function getAccount() {
       try {
-        console.log("get account");
         const web3 = await getWeb3();
-        console.log(web3);
         const accounts = await web3.eth.getAccounts();
-        console.log(accounts);
         setAccount(accounts[0]);
       } catch (err) {
         console.error(err);
       }
     }
-
     getAccount();
   }, []);
 
-  return (
-    <Card title={account ? "Tokens" : "Hi Stranger"}>
-      {account ? (
+  return account ? (
+    <React.Fragment>
+      <Card title="Buy GasSynth">
         <div className="row">
           <div className="col-md-12 text-center">
             <InputField
-              value={amount}
-              placeholder="100"
-              onChange={ev => setAmount(ev.target.value)}
+              value={buyAmount}
+              placeholder="ETH Amount"
+              onChange={ev => setBuyAmount(ev.target.value)}
             />
-            <strong>Total:</strong> {parseFloat(amount * price, 2)}
-            <InlineButton onClick={buy}>Buy</InlineButton>
-            <InlineButton onClick={sell}>Sell</InlineButton>
+            {buying ? (
+              <Loading type="bar" text="Buying..." />
+            ) : (
+              <React.Fragment>
+                <p>
+                  <strong>Total GasSynth:</strong>{" "}
+                  {parseFloat(buyAmount * price, 2)}
+                </p>
+                <Button onClick={buy}>Buy</Button>
+              </React.Fragment>
+            )}
           </div>
         </div>
-      ) : (
+      </Card>
+
+      <Card title="Sell GasSynth">
         <div className="row">
           <div className="col-md-12 text-center">
-            <p>In order to transact, sign in with MetaMask.</p>
-            <Loading type="bar" text="Loading..." />
+            <InputField
+              value={sellAmount}
+              placeholder="GasSynth Amount"
+              onChange={ev => setSellAmount(ev.target.value)}
+            />
+            {selling ? (
+              <Loading type="bar" text="Selling..." />
+            ) : (
+              <React.Fragment>
+                <p>
+                  <strong>Total ETH:</strong>{" "}
+                  {parseFloat(sellAmount / price, 2)}
+                </p>
+                <Button onClick={sell}>Sell</Button>
+              </React.Fragment>
+            )}
           </div>
         </div>
-      )}
+      </Card>
+
+      <div className="row">
+        <div className="col-md-12 text-center">
+          <small>{account}</small>
+        </div>
+      </div>
+    </React.Fragment>
+  ) : (
+    <Card title="Hi Stranger">
+      <div className="row">
+        <div className="col-md-12 text-center">
+          <p>In order to transact, sign in with MetaMask.</p>
+          <Loading type="bar" text="Loading..." />
+        </div>
+      </div>
     </Card>
   );
-};
-
-Account.defaultProps = {
-  price: 12.13
 };
 
 export default Account;

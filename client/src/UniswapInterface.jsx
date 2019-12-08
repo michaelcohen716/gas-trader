@@ -16,13 +16,12 @@ const UNISWAP_FACTORY_ADDRESS = "0x9c83dCE8CA20E9aAF9D3efc003b2ea62aBC08351";
 const UNISWAP_EXCHANGE_ADDRESS = "0xc4659c4DD66d1175D8b3C53b195911AD493Bb2eB";
 const TOKEN_ADDRESS = "0x701a74998C0091ec2C8278Ca223Ce3760DE0747e";
 
-async function getPastEvents() {
-  const exchContr = await ExchangeContract();
-  const allLogs = await exchContr.getPastEvents({
-    fromBlock: 0,
-    toBlock: "latest"
-  });
-  console.log("all logs", allLogs);
+
+export async function getPastEvents(){
+    const exchContr = await ExchangeContract();
+    const allLogs = await exchContr.getPastEvents({ fromBlock: 0, toBlock: "latest" });
+    console.log('all logs', allLogs)
+    return allLogs;
 }
 
 // getPastEvents()
