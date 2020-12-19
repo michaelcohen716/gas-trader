@@ -5,6 +5,7 @@ import Card from "../Card";
 import Button from "../Button";
 import InputField from "../InputField";
 import Loading from "../Loading";
+import GasPrediction from "../GasPrediction";
 import { ethForToken, ExchangeContractEthers } from "../../UniswapInterface";
 
 const Account = ({ price }) => {
@@ -93,11 +94,15 @@ const Account = ({ price }) => {
         </div>
       </Card>
 
-      <div className="row">
-        <div className="col-md-12 text-center">
-          <small>{account}</small>
+      <GasPrediction />
+
+      <Card title="Your Account Info:">
+        <div className="row">
+          <div className="col-md-12 text-center">
+            <small>{account}</small>
+          </div>
         </div>
-      </div>
+      </Card>
     </React.Fragment>
   ) : (
     <Card title="Hi Stranger">
